@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useToastStore } from '../../store/toastStore';
-import { X, Calendar, CalendarPlus, Plus, Trash2, CheckCircle2, Circle, FastForward, Rewind, Edit2, Check, Save } from 'lucide-react';
+import { X, Calendar, CalendarPlus, Trash2, CheckCircle2, Circle, FastForward, Rewind, Edit2, Check, Save } from 'lucide-react';
 import { DatePicker } from '../ui/DatePicker';
 import { Select } from '../ui/Select';
 import { ConfirmModal } from '../ui/ConfirmModal';
