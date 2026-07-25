@@ -694,10 +694,10 @@ export default function Schedule() {
                 />
               </div>
             </div>
-            <div className="p-4 border-t border-border/50 bg-muted flex justify-end gap-3 rounded-b-3xl">
+            <div className="p-4 border-t border-border/50 bg-muted flex flex-col-reverse sm:flex-row sm:justify-end gap-3 rounded-b-3xl">
               <button
                 onClick={() => setShowHolidayModal(false)}
-                className="px-4 py-2 text-sm font-bold text-muted-foreground hover:bg-muted/80 rounded-xl"
+                className="w-full sm:w-auto px-4 py-2 text-sm font-bold text-muted-foreground hover:bg-muted/80 rounded-xl"
                 disabled={creatingHoliday}
               >
                 Cancelar
@@ -705,7 +705,7 @@ export default function Schedule() {
               <button
                 onClick={handleCreateHoliday}
                 disabled={!holidayDate || creatingHoliday}
-                className="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 disabled:opacity-50 flex items-center gap-2"
+                className="w-full sm:w-auto justify-center px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 disabled:opacity-50 flex items-center gap-2"
               >
                 {creatingHoliday ? 'Procesando...' : 'Bloquear Día'}
               </button>
@@ -756,7 +756,7 @@ export default function Schedule() {
                   setShowScheduleChangeModal(false);
                   setPendingChange(null);
                 }}
-                className="px-5 py-2 text-sm font-bold text-muted-foreground hover:bg-muted rounded-xl"
+                className="w-full sm:w-auto px-5 py-2 text-sm font-bold text-muted-foreground hover:bg-muted rounded-xl"
               >
                 Cancelar
               </button>

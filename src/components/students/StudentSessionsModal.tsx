@@ -265,7 +265,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/20 backdrop-blur-sm animate-in fade-in duration-200 p-4">
       <div className="bg-card w-[95vw] max-w-7xl rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-900 border-b border-border p-5 sm:px-8 sm:py-6 flex items-start justify-between">
+        <div className="relative overflow-hidden bg-card border-b border-border p-5 sm:px-8 sm:py-6 flex items-start justify-between">
           <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
           
           <div className="relative flex items-center gap-4 sm:gap-5 w-full pr-8 sm:pr-0">
