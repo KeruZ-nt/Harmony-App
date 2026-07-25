@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useToastStore } from '../../store/toastStore';
-import { X, Calendar, Plus, Trash2, CheckCircle2, Circle, FastForward, Rewind, Edit2, Check } from 'lucide-react';
+import { X, Calendar, Plus, Trash2, CheckCircle2, Circle, FastForward, Rewind, Edit2, Check, Save } from 'lucide-react';
 import { DatePicker } from '../ui/DatePicker';
 import { Select } from '../ui/Select';
 import { ConfirmModal } from '../ui/ConfirmModal';
@@ -273,7 +273,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
               <Calendar className="w-5 h-5 sm:w-7 sm:h-7" />
             </div>
             <div className="flex flex-col overflow-hidden">
-              <h2 className="text-lg sm:text-2xl leading-tight font-bold font-sans text-foreground tracking-tight truncate">
+              <h2 className="text-[17px] sm:text-2xl leading-tight font-bold font-sans text-foreground tracking-tight truncate max-w-[200px] sm:max-w-none">
                 Panel de Asistencia
               </h2>
               <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-0.5 sm:mt-1.5">
@@ -489,15 +489,16 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border/50 bg-muted flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">
+        <div className="p-4 border-t border-border/50 bg-muted flex items-center justify-between gap-4">
+          <p className="text-[10px] sm:text-xs text-muted-foreground flex-1">
             Los cambios en asistencia y observaciones se guardan automáticamente.
           </p>
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-sm"
+            className="shrink-0 flex items-center justify-center w-12 h-12 sm:w-auto sm:h-auto sm:px-6 sm:py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-sm"
           >
-            Guardar y Cerrar
+            <Save className="w-5 h-5 sm:hidden" />
+            <span className="hidden sm:inline">Guardar y Cerrar</span>
           </button>
         </div>
       </div>
