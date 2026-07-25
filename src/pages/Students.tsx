@@ -190,10 +190,11 @@ export default function Students() {
                       <div className="text-xs text-muted-foreground mt-0.5">{student.frequency}</div>
                     </td>
                     <td className="px-6 py-4">
-                      {student.contact_name ? (
-                        <div>
-                          <div className="text-sm font-medium">{student.contact_name}</div>
-                          {student.contact_phone && <div className="text-xs text-muted-foreground mt-0.5">{student.contact_phone}</div>}
+                      {(student.contact_name || student.contact_phone || student.contact_email) ? (
+                        <div className="flex flex-col gap-0.5">
+                          {student.contact_name && <div className="text-sm font-medium">{student.contact_name}</div>}
+                          {student.contact_phone && <div className="text-xs text-muted-foreground">{student.contact_phone}</div>}
+                          {student.contact_email && <div className="text-xs text-muted-foreground truncate max-w-[150px]" title={student.contact_email}>{student.contact_email}</div>}
                         </div>
                       ) : '-'}
                     </td>
