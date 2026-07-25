@@ -31,7 +31,6 @@ export default function StudentPortal() {
   const [loading, setLoading] = useState(true);
   const [student, setStudent] = useState<StudentData | null>(null);
   const [upcomingSessions, setUpcomingSessions] = useState<SessionData[]>([]);
-  const [pastSessions, setPastSessions] = useState<SessionData[]>([]);
   const [allSessions, setAllSessions] = useState<SessionData[]>([]);
 
   useEffect(() => {
@@ -67,10 +66,8 @@ export default function StudentPortal() {
         } else if (sessionsData) {
           const now = new Date();
           const upcoming = sessionsData.filter(s => new Date(s.end_time) > now);
-          const past = sessionsData.filter(s => new Date(s.end_time) <= now).reverse(); // más recientes primero
           
           setUpcomingSessions(upcoming);
-          setPastSessions(past);
           setAllSessions([...sessionsData]); // Todas las sesiones, en orden ascendente
         }
 
