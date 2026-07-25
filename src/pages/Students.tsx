@@ -71,13 +71,20 @@ export default function Students() {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary/90 hover:to-indigo-600 text-white w-full sm:w-auto px-4 sm:px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:shadow-primary/40 mt-4 sm:mt-0"
-          >
-            <UserPlus className="w-5 h-5 sm:w-4 sm:h-4" />
-            <span>Nuevo Alumno</span>
-          </button>
+          <div className="flex items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
+            <div className="shrink-0 flex items-center gap-2 bg-gradient-to-br from-primary/10 to-primary/5 px-4 py-3 rounded-2xl border border-primary/10 shadow-sm">
+              <span className="text-[10px] font-bold text-primary uppercase tracking-widest hidden sm:inline">Total</span>
+              <span className="text-xl font-display font-black text-primary leading-none">{filteredStudents.length}</span>
+            </div>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary/90 hover:to-indigo-600 text-white px-4 sm:px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:shadow-primary/40"
+            >
+              <UserPlus className="w-5 h-5 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Nuevo Alumno</span>
+              <span className="sm:hidden">Nuevo</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -116,11 +123,6 @@ export default function Students() {
               { value: "desc", label: "Orden Z-A" },
             ]}
           />
-        </div>
-        
-        <div className="shrink-0 flex items-center gap-3 bg-gradient-to-br from-primary/10 to-primary/5 px-5 py-2 rounded-xl border border-primary/10 shadow-sm self-end lg:self-auto relative z-10">
-          <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Total</span>
-          <span className="text-xl font-display font-black text-primary leading-none">{filteredStudents.length}</span>
         </div>
       </div>
 
@@ -164,13 +166,13 @@ export default function Students() {
                   <tr 
                     key={student.id} 
                     onClick={() => setSelectedStudent(student)}
-                    className="block md:table-row bg-card md:bg-transparent border border-border/50 md:border-0 rounded-2xl md:rounded-none mb-4 md:mb-0 p-4 md:p-0 hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row shadow-sm md:shadow-none"
+                    className="grid grid-cols-2 md:table-row bg-card md:bg-transparent border border-border/50 md:border-0 rounded-2xl md:rounded-none mb-4 md:mb-0 p-4 md:p-0 hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row shadow-sm md:shadow-none gap-y-3"
                   >
-                    <td className="block md:table-cell px-2 py-2 md:px-6 md:py-4 border-b border-border/10 md:border-0">
+                    <td className="col-span-2 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b border-border/10 md:border-0">
                       <div className="font-display font-bold text-lg md:text-base text-foreground group-hover/row:text-primary transition-colors">{student.first_name} {student.last_name}</div>
                       {student.grade_level && <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-1">{student.grade_level}</div>}
                     </td>
-                    <td className="block md:table-cell px-2 py-3 md:px-6 md:py-4 border-b border-border/10 md:border-0">
+                    <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b-0 border-border/10">
                       <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Días y Horarios</div>
                       {student.schedule_days ? (
                         <div className="flex flex-col gap-1 text-sm text-muted-foreground">
@@ -183,7 +185,7 @@ export default function Students() {
                         </div>
                       ) : <span className="text-muted-foreground/50">-</span>}
                     </td>
-                    <td className="block md:table-cell px-2 py-3 md:px-6 md:py-4 border-b border-border/10 md:border-0">
+                    <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b-0 border-border/10">
                       <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Plan y Frecuencia</div>
                       <div className="font-medium text-[#e86d11] flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
@@ -191,18 +193,18 @@ export default function Students() {
                       </div>
                       <div className="text-xs text-muted-foreground mt-0.5">{student.frequency}</div>
                     </td>
-                    <td className="block md:table-cell px-2 py-3 md:px-6 md:py-4 border-b border-border/10 md:border-0">
+                    <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4">
                       <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Contacto</div>
                       {(student.contact_name || student.contact_phone || student.contact_email) ? (
                         <div className="flex flex-col gap-0.5">
                           {student.contact_name && <div className="text-sm font-medium">{student.contact_name}</div>}
                           {student.contact_phone && <div className="text-xs text-muted-foreground">{student.contact_phone}</div>}
-                          {student.contact_email && <div className="text-xs text-muted-foreground truncate max-w-[200px]" title={student.contact_email}>{student.contact_email}</div>}
+                          {student.contact_email && <div className="text-xs text-muted-foreground truncate max-w-[120px]" title={student.contact_email}>{student.contact_email}</div>}
                         </div>
                       ) : <span className="text-muted-foreground/50">-</span>}
                     </td>
-                    <td className="block md:table-cell px-2 py-3 md:px-6 md:py-4 flex justify-between items-center md:table-cell">
-                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden">Estado</div>
+                    <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4 flex flex-col justify-center items-start md:items-center">
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Estado</div>
                       {getStatusBadge(student.status)}
                     </td>
                   </tr>
