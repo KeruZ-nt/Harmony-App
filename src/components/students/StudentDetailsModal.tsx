@@ -60,7 +60,7 @@ export function StudentDetailsModal({ student, onClose }: StudentDetailsModalPro
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 backdrop-blur-sm animate-in fade-in duration-200 p-4">
         <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
-        <div className="bg-card w-full max-w-lg rounded-3xl shadow-2xl flex flex-col max-h-[90vh] relative z-10">
+        <div className="bg-card w-full max-w-md rounded-3xl shadow-2xl flex flex-col max-h-[90vh] relative z-10">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border/50">
           <h2 className="text-xl font-bold font-sans flex items-center gap-2">
@@ -88,7 +88,7 @@ export function StudentDetailsModal({ student, onClose }: StudentDetailsModalPro
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-slate-50/80 p-4 rounded-2xl border border-border/50 shadow-sm">
               <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5" /> Plan
@@ -150,11 +150,11 @@ export function StudentDetailsModal({ student, onClose }: StudentDetailsModalPro
         </div>
 
         {/* Footer Actions */}
-        <div className={`p-6 border-t border-border/50 bg-slate-50/50 rounded-b-3xl grid ${student.status !== 'Cesado' ? 'grid-cols-3' : 'grid-cols-2'} gap-3`}>
+        <div className="p-6 border-t border-border/50 bg-slate-50/50 rounded-b-3xl flex flex-col sm:flex-row gap-3">
           <button
             type="button"
             onClick={() => setShowEditModal(true)}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border hover:bg-foreground/5 rounded-xl text-sm font-medium transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-border hover:bg-foreground/5 rounded-xl text-sm font-medium transition-colors"
           >
             <Edit className="w-4 h-4" />
             Editar
@@ -165,7 +165,7 @@ export function StudentDetailsModal({ student, onClose }: StudentDetailsModalPro
               type="button"
               onClick={handleCese}
               disabled={isCesando}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-amber-200 text-amber-700 hover:bg-amber-50 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-amber-200 text-amber-700 hover:bg-amber-50 rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
             >
               <User className="w-4 h-4" />
               Pasar a Cese
@@ -175,7 +175,7 @@ export function StudentDetailsModal({ student, onClose }: StudentDetailsModalPro
           <button
             type="button"
             onClick={() => setShowConfirmDelete(true)}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-red-200 text-red-600 hover:bg-red-50 rounded-xl text-sm font-medium transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-card border border-red-200 text-red-600 hover:bg-red-50 rounded-xl text-sm font-medium transition-colors"
           >
             <Trash2 className="w-4 h-4" />
             Eliminar

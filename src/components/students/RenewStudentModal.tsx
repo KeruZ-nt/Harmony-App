@@ -253,11 +253,11 @@ export function RenewStudentModal({ student, isOpen, onClose }: RenewStudentModa
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border/50 bg-muted flex justify-end gap-3">
+        <div className="p-4 border-t border-border/50 bg-muted flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 text-sm font-bold text-muted-foreground hover:bg-muted/80 rounded-xl transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 text-sm font-bold text-muted-foreground hover:bg-muted/80 rounded-xl transition-colors"
             disabled={loading}
           >
             Cancelar
@@ -266,7 +266,7 @@ export function RenewStudentModal({ student, isOpen, onClose }: RenewStudentModa
             type="submit"
             form="renew-form"
             disabled={loading || selectedSchedules.length === 0}
-            className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-all shadow-sm active:scale-[0.98] disabled:opacity-50">
+            className="w-full sm:w-auto justify-center flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-all shadow-sm active:scale-[0.98] disabled:opacity-50">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             Generar Nuevas Clases
           </button>

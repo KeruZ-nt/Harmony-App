@@ -443,11 +443,11 @@ export function NewStudentModal({ isOpen, onClose }: NewStudentModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-border/50 flex justify-end gap-3 bg-muted/50 rounded-b-3xl">
+        <div className="p-6 border-t border-border/50 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 bg-muted/50 rounded-b-3xl">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 text-sm font-medium text-muted-foreground hover:bg-foreground/5 rounded-xl transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 text-sm font-medium text-muted-foreground hover:bg-foreground/5 rounded-xl transition-colors"
           >
             Cancelar
           </button>
@@ -455,7 +455,7 @@ export function NewStudentModal({ isOpen, onClose }: NewStudentModalProps) {
             type="submit"
             form="new-student-form"
             disabled={loading}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all shadow-md shadow-primary/20 disabled:opacity-70"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition-all shadow-md shadow-primary/20 disabled:opacity-70"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             Guardar Alumno

@@ -55,12 +55,12 @@ export const ConfirmModal = ({
             <div className="mt-2 text-sm text-muted-foreground">{message}</div>
           </div>
         </div>
-        <div className="mt-6 flex justify-center gap-3">
+        <div className="mt-6 flex flex-col-reverse sm:flex-row justify-center gap-3">
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="rounded-xl border border-border bg-foreground/5 px-4 py-2 text-sm font-medium hover:bg-black/10 transition-colors disabled:opacity-50"
+            className="w-full sm:w-auto rounded-xl border border-border bg-foreground/5 px-4 py-2 text-sm font-medium hover:bg-black/10 transition-colors disabled:opacity-50"
           >
             {cancelText}
           </button>
@@ -68,7 +68,7 @@ export const ConfirmModal = ({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`rounded-xl px-4 py-2 text-sm font-medium text-white transition-all disabled:opacity-50 ${colors.button}`}
+            className={`w-full sm:w-auto rounded-xl px-4 py-2 text-sm font-medium text-white transition-all disabled:opacity-50 ${colors.button}`}
           >
             {loading ? 'Procesando...' : confirmText}
           </button>

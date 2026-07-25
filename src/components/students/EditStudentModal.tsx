@@ -257,11 +257,11 @@ export function EditStudentModal({ student, isOpen, onClose }: EditStudentModalP
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-border/50 bg-muted/50 rounded-b-3xl flex justify-end gap-3">
+        <div className="p-6 border-t border-border/50 bg-muted/50 rounded-b-3xl flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 text-sm font-medium text-muted-foreground hover:bg-foreground/5 rounded-xl transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 text-sm font-medium text-muted-foreground hover:bg-foreground/5 rounded-xl transition-colors"
           >
             Cancelar
           </button>
@@ -269,7 +269,7 @@ export function EditStudentModal({ student, isOpen, onClose }: EditStudentModalP
             form="edit-student-form"
             type="submit"
             disabled={loading}
-            className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold rounded-xl transition-all shadow-lg shadow-primary/25 disabled:opacity-50 flex items-center gap-2"
+            className="w-full sm:w-auto justify-center px-6 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold rounded-xl transition-all shadow-lg shadow-primary/25 disabled:opacity-50 flex items-center gap-2"
           >
             {loading ? (
               <>
