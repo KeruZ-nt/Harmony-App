@@ -25,3 +25,4 @@ Este documento recopila las próximas características, mejoras de seguridad e i
 
 *   **Selector de Temas (Light / Dark Mode):** Reintroducir el diseño *OLED Dark Mode* como un toggle opcional, permitiendo a los usuarios cambiar libremente entre el *Clean Light Mode* actual y la versión oscura.
 *   **Optimización de Carga (Code Splitting):** Dividir el bundle de Vite con `React.lazy()` para reducir el tamaño de carga inicial a menos de 500KB.
+
