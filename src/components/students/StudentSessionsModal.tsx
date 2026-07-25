@@ -15,11 +15,20 @@ interface StudentSessionsModalProps {
 }
 
 export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew }: StudentSessionsModalProps) {
-  const { sessions, loading, fetchSessionsByStudent, updateSession, deleteSession, addSession, shiftSessionsForward } = useSessionStore();
+  const { sessions, loading, fetchSessionsByStudent, updateSession, deleteSession, addSession, shiftSessionsForward, bulkShiftSchedule } = useSessionStore();
   const { addToast } = useToastStore();
   const [addingSession, setAddingSession] = useState(false);
   const [editingRowId, setEditingRowId] = useState<string | null>(null);
   const [hasPromptedRenewal, setHasPromptedRenewal] = useState(false);
+  
+  const [shiftPrompt, setShiftPrompt] = useState<{
+    sessionId: string;
+    currentStart: string;
+    currentEnd: string;
+    newStartIso: string;
+    newEndIso: string;
+  } | null>(null);
+
   const pendingSessionsCount = sessions.filter(s => s.status === 'Programada').length;
   const isExpiring = pendingSessionsCount > 0 && pendingSessionsCount <= 2;
 
@@ -73,22 +82,16 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
     }
   };
 
-  const handleAddSession = async (dayNum: number, daySessions: Session[]) => {
+  const handleAddSession = async () => {
     setAddingSession(true);
     try {
       let nextDate = new Date();
-      if (daySessions.length > 0) {
-        // Find the last session for this day to append exactly 1 week after
-        const lastSession = daySessions.reduce((latest, current) => {
-          return new Date(current.start_time) > new Date(latest.start_time) ? current : latest;
-        });
+      if (sessions.length > 0) {
+        const sortedSessions = [...sessions].sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
+        const lastSession = sortedSessions[sortedSessions.length - 1];
         nextDate = new Date(lastSession.start_time);
         nextDate.setDate(nextDate.getDate() + 7);
       } else {
-        // Fallback: Just find the next occurrence of this day of the week
-        const currentDay = nextDate.getDay();
-        const diff = (dayNum - currentDay + 7) % 7;
-        nextDate.setDate(nextDate.getDate() + (diff === 0 ? 7 : diff));
         nextDate.setHours(16, 0, 0, 0); // Default to 16:00
       }
 
@@ -147,41 +150,63 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
 
   const handleDateChange = async (sessionId: string, currentStart: string, currentEnd: string, newDateStr: string) => {
     if (!newDateStr) return;
-    try {
-      const start = new Date(currentStart);
-      const end = new Date(currentEnd);
-      
-      const [year, month, day] = newDateStr.split('-').map(Number);
-      start.setFullYear(year, month - 1, day);
-      end.setFullYear(year, month - 1, day);
+    const start = new Date(currentStart);
+    const end = new Date(currentEnd);
+    
+    const [year, month, day] = newDateStr.split('-').map(Number);
+    start.setFullYear(year, month - 1, day);
+    end.setFullYear(year, month - 1, day);
 
-      await updateSession(sessionId, { 
-        start_time: start.toISOString(),
-        end_time: end.toISOString()
-      });
-      addToast({ message: 'Fecha actualizada', type: 'success' });
-    } catch (error) {
-      addToast({ message: 'Error al actualizar fecha', type: 'error' });
-    }
+    setShiftPrompt({
+      sessionId,
+      currentStart,
+      currentEnd,
+      newStartIso: start.toISOString(),
+      newEndIso: end.toISOString()
+    });
   };
 
   const handleTimeChange = async (sessionId: string, currentStart: string, currentEnd: string, newTimeStr: string) => {
     if (!newTimeStr) return;
-    try {
-      const start = new Date(currentStart);
-      const end = new Date(currentEnd);
-      
-      const [hours, minutes] = newTimeStr.split(':').map(Number);
-      start.setHours(hours, minutes);
-      end.setHours(hours + 1, minutes); // Assuming 1 hour duration by default
+    const start = new Date(currentStart);
+    const end = new Date(currentEnd);
+    
+    const [hours, minutes] = newTimeStr.split(':').map(Number);
+    start.setHours(hours, minutes);
+    end.setHours(hours + 1, minutes);
 
-      await updateSession(sessionId, { 
-        start_time: start.toISOString(),
-        end_time: end.toISOString()
-      });
-      addToast({ message: 'Hora actualizada', type: 'success' });
+    setShiftPrompt({
+      sessionId,
+      currentStart,
+      currentEnd,
+      newStartIso: start.toISOString(),
+      newEndIso: end.toISOString()
+    });
+  };
+
+  const confirmShift = async (type: 'Reprogramación' | 'Cambio de Horario') => {
+    if (!shiftPrompt) return;
+    try {
+      if (type === 'Reprogramación') {
+        await updateSession(shiftPrompt.sessionId, { 
+          start_time: shiftPrompt.newStartIso,
+          end_time: shiftPrompt.newEndIso,
+          type: 'Reprogramación'
+        });
+      } else {
+        await updateSession(shiftPrompt.sessionId, { 
+          start_time: shiftPrompt.newStartIso,
+          end_time: shiftPrompt.newEndIso,
+          type: 'Cambio de Horario'
+        });
+        await bulkShiftSchedule(student.id, shiftPrompt.currentStart, shiftPrompt.newStartIso, shiftPrompt.newEndIso);
+      }
+      addToast({ message: 'Clase actualizada', type: 'success' });
+      await fetchSessionsByStudent(student.id);
     } catch (error) {
-      addToast({ message: 'Error al actualizar hora', type: 'error' });
+      addToast({ message: 'Error al actualizar', type: 'error' });
+    } finally {
+      setShiftPrompt(null);
     }
   };
 
@@ -284,152 +309,147 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
               No hay clases programadas.
             </div>
           ) : (
-            <div className={`grid gap-6 ${Array.from(new Set(sessions.map(s => new Date(s.start_time).getDay()))).length > 1 ? 'grid-cols-1 xl:grid-cols-2' : 'grid-cols-1'} items-start`}>
-              {Array.from(new Set(sessions.map(s => new Date(s.start_time).getDay()))).sort().map(dayNum => {
-                const daySessions = sessions.filter(s => new Date(s.start_time).getDay() === dayNum);
-                const dayNames = ['Domingos', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábados'];
-                
-                return (
-                  <div key={dayNum} className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col">
-                    <div className="bg-muted/80 px-4 py-3 font-bold text-sm text-foreground border-b border-border/50 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span>{dayNames[dayNum]}</span>
-                        <span className="bg-card px-2 py-0.5 rounded-md text-xs font-medium border border-border/50">{daySessions.length} clases</span>
-                      </div>
-                      <button
-                        onClick={() => handleAddSession(dayNum, daySessions)}
-                        disabled={addingSession}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border hover:border-primary/50 hover:bg-primary/5 text-primary text-[11px] font-bold rounded-lg transition-all shadow-sm disabled:opacity-50"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        Añadir Manual
-                      </button>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm text-left">
-                        <thead className="bg-muted border-b border-border/50 text-[10px] font-bold uppercase text-muted-foreground">
-                          <tr>
-                            <th className="px-3 py-2 text-center w-8">Nº</th>
-                            <th className="px-2 py-2">Fecha / Hora</th>
-                            <th className="px-2 py-2 text-center w-28">Estado</th>
-                            <th className="px-2 py-2">Notas</th>
-                            <th className="px-2 py-2 text-center w-20"></th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-black/5">
-                          {daySessions.map((session, index) => (
-                            <tr key={session.id} className="hover:bg-muted transition-colors">
-                              <td className="px-3 py-2 text-center text-muted-foreground font-medium text-xs">
-                                {index + 1}
-                              </td>
-                              <td className="px-2 py-2">
-                                {editingRowId === session.id ? (
-                                  <div className="flex flex-col gap-1">
-                                    <DatePicker
-                                      value={session.start_time.split('T')[0]}
-                                      onChange={(newDateStr) => {
-                                        if (newDateStr !== session.start_time.split('T')[0]) {
-                                          handleDateChange(session.id, session.start_time, session.end_time, newDateStr);
-                                        }
-                                      }}
-                                      placeholder="Fecha"
-                                    />
-                                    <Select
-                                      value={new Date(session.start_time).toTimeString().slice(0,5)}
-                                      onChange={(newTimeStr) => {
-                                        if (newTimeStr !== new Date(session.start_time).toTimeString().slice(0,5)) {
-                                          handleTimeChange(session.id, session.start_time, session.end_time, newTimeStr);
-                                        }
-                                      }}
-                                      options={TIME_OPTIONS}
-                                      placeholder="Hora"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="flex flex-col">
-                                    <span className="capitalize font-medium text-foreground text-xs">{formatDate(session.start_time)}</span>
-                                    <span className="text-muted-foreground text-[11px]">{formatTime(session.start_time)}</span>
-                                  </div>
-                                )}
-                              </td>
-                              <td className="px-2 py-2">
-                                <button
-                                  onClick={() => handleStatusToggle(session)}
-                                  className={`w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-[11px] font-bold transition-all border ${
-                                    session.status === 'Completada' 
-                                      ? 'bg-green-500/10 text-green-700 border-green-500/20 hover:bg-green-500/20' 
-                                      : 'bg-muted/80 text-muted-foreground border-border/50 hover:bg-slate-200'
-                                  }`}
-                                >
-                                  {session.status === 'Completada' ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
-                                  {session.status === 'Completada' ? 'Completada' : 'Programada'}
-                                </button>
-                              </td>
-                              <td className="px-2 py-2">
-                                <input
-                                  type="text"
-                                  defaultValue={session.observation || ''}
-                                  onBlur={(e) => {
-                                    if (e.target.value !== session.observation) {
-                                      handleObservationChange(session.id, e.target.value);
+            <div className="grid gap-6 grid-cols-1 items-start">
+              <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col">
+                <div className="bg-muted/80 px-4 py-3 font-bold text-sm text-foreground border-b border-border/50 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span>Todas las clases</span>
+                    <span className="bg-card px-2 py-0.5 rounded-md text-xs font-medium border border-border/50">{sessions.length} clases</span>
+                  </div>
+                  <button
+                    onClick={() => handleAddSession()}
+                    disabled={addingSession}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border hover:border-primary/50 hover:bg-primary/5 text-primary text-[11px] font-bold rounded-lg transition-all shadow-sm disabled:opacity-50"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    Añadir Manual
+                  </button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-muted border-b border-border/50 text-[10px] font-bold uppercase text-muted-foreground">
+                      <tr>
+                        <th className="px-3 py-2 text-center w-8">Nº</th>
+                        <th className="px-2 py-2">Fecha / Hora</th>
+                        <th className="px-2 py-2 text-center w-28">Estado</th>
+                        <th className="px-2 py-2">Notas</th>
+                        <th className="px-2 py-2 text-center w-20"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-black/5">
+                      {[...sessions]
+                        .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
+                        .map((session, index) => (
+                        <tr key={session.id} className="hover:bg-muted transition-colors">
+                          <td className="px-3 py-2 text-center text-muted-foreground font-medium text-xs">
+                            {index + 1}
+                          </td>
+                          <td className="px-2 py-2">
+                            {editingRowId === session.id ? (
+                              <div className="flex flex-col gap-1">
+                                <DatePicker
+                                  value={session.start_time.split('T')[0]}
+                                  onChange={(newDateStr) => {
+                                    if (newDateStr !== session.start_time.split('T')[0]) {
+                                      handleDateChange(session.id, session.start_time, session.end_time, newDateStr);
                                     }
                                   }}
-                                  placeholder="Notas..."
-                                  className="w-full bg-transparent border-b border-transparent focus:border-primary/30 outline-none py-1 text-xs text-foreground transition-all placeholder:text-muted-foreground/50"
+                                  placeholder="Fecha"
                                 />
-                              </td>
-                              <td className="px-2 py-2 text-center">
-                                <div className="flex items-center justify-center gap-0.5">
-                                  {editingRowId === session.id ? (
-                                    <>
-                                      <button
-                                        onClick={() => setEditingRowId(null)}
-                                        className="p-1 text-green-500 hover:bg-green-50 rounded-lg transition-colors"
-                                        title="Finalizar edición"
-                                      >
-                                        <Check className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={() => handleRewind(session.id)}
-                                        className="p-1 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
-                                        title="Retroceder esta clase y las siguientes (-7 días)"
-                                      >
-                                        <Rewind className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={() => handleShift(session.id)}
-                                        className="p-1 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                                        title="Desplazar esta clase y las siguientes (+7 días)"
-                                      >
-                                        <FastForward className="w-3.5 h-3.5" />
-                                      </button>
-                                    </>
-                                  ) : (
-                                    <button
-                                      onClick={() => setEditingRowId(session.id)}
-                                      className="p-1 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
-                                      title="Editar fecha y hora"
-                                    >
-                                      <Edit2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  )}
+                                <Select
+                                  value={new Date(session.start_time).toTimeString().slice(0,5)}
+                                  onChange={(newTimeStr) => {
+                                    if (newTimeStr !== new Date(session.start_time).toTimeString().slice(0,5)) {
+                                      handleTimeChange(session.id, session.start_time, session.end_time, newTimeStr);
+                                    }
+                                  }}
+                                  options={TIME_OPTIONS}
+                                  placeholder="Hora"
+                                />
+                              </div>
+                            ) : (
+                              <div className="flex flex-col">
+                                <span className="capitalize font-medium text-foreground text-xs">{formatDate(session.start_time)}</span>
+                                <span className="text-muted-foreground text-[11px]">{formatTime(session.start_time)}</span>
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-2 py-2">
+                            <button
+                              onClick={() => handleStatusToggle(session)}
+                              className={`w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-[11px] font-bold transition-all border ${
+                                session.status === 'Completada' 
+                                  ? 'bg-green-500/10 text-green-700 border-green-500/20 hover:bg-green-500/20' 
+                                  : 'bg-muted/80 text-muted-foreground border-border/50 hover:bg-slate-200'
+                              }`}
+                            >
+                              {session.status === 'Completada' ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
+                              {session.status === 'Completada' ? 'Completada' : 'Programada'}
+                            </button>
+                          </td>
+                          <td className="px-2 py-2">
+                            <input
+                              type="text"
+                              defaultValue={session.observation || ''}
+                              onBlur={(e) => {
+                                if (e.target.value !== session.observation) {
+                                  handleObservationChange(session.id, e.target.value);
+                                }
+                              }}
+                              placeholder="Notas..."
+                              className="w-full bg-transparent border-b border-transparent focus:border-primary/30 outline-none py-1 text-xs text-foreground transition-all placeholder:text-muted-foreground/50"
+                            />
+                          </td>
+                          <td className="px-2 py-2 text-center">
+                            <div className="flex items-center justify-center gap-0.5">
+                              {editingRowId === session.id ? (
+                                <>
                                   <button
-                                    onClick={() => handleDeleteSession(session.id)}
-                                    className="p-1 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                    title="Eliminar clase"
+                                    onClick={() => setEditingRowId(null)}
+                                    className="p-1 text-green-500 hover:bg-green-50 rounded-lg transition-colors"
+                                    title="Finalizar edición"
                                   >
-                                    <Trash2 className="w-3.5 h-3.5" />
+                                    <Check className="w-3.5 h-3.5" />
                                   </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                );
-              })}
+                                  <button
+                                    onClick={() => handleRewind(session.id)}
+                                    className="p-1 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
+                                    title="Retroceder esta clase y las siguientes (-7 días)"
+                                  >
+                                    <Rewind className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleShift(session.id)}
+                                    className="p-1 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                                    title="Desplazar esta clase y las siguientes (+7 días)"
+                                  >
+                                    <FastForward className="w-3.5 h-3.5" />
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  onClick={() => setEditingRowId(session.id)}
+                                  className="p-1 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                  title="Editar fecha y hora"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleDeleteSession(session.id)}
+                                className="p-1 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Eliminar clase"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           )}
           
@@ -459,6 +479,53 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
         }}
         onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
       />
+
+      {/* Modal for Shift Type */}
+      {shiftPrompt && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 p-4">
+          <div className="bg-card w-full max-w-sm rounded-3xl shadow-2xl flex flex-col p-6 space-y-5">
+            <div>
+              <h3 className="font-bold text-lg text-foreground">Tipo de Modificación</h3>
+              <p className="text-sm text-muted-foreground mt-1">¿Cómo deseas aplicar este cambio de fecha u hora?</p>
+            </div>
+            
+            <div className="space-y-3">
+              <button
+                onClick={() => confirmShift('Reprogramación')}
+                className="w-full text-left p-4 rounded-xl border border-border hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all group"
+              >
+                <div className="font-bold text-cyan-700 dark:text-cyan-400 text-sm group-hover:text-cyan-600 mb-1">
+                  Reprogramación
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Solo moverá esta clase en específico a la nueva fecha y hora. Las demás clases no se verán afectadas.
+                </div>
+              </button>
+
+              <button
+                onClick={() => confirmShift('Cambio de Horario')}
+                className="w-full text-left p-4 rounded-xl border border-border hover:border-purple-500/50 hover:bg-purple-500/5 transition-all group"
+              >
+                <div className="font-bold text-purple-700 dark:text-purple-400 text-sm group-hover:text-purple-600 mb-1">
+                  Cambio de Horario Definitivo
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Moverá esta clase y TODAS LAS FUTURAS que caían en el mismo día, respetando la nueva frecuencia.
+                </div>
+              </button>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setShiftPrompt(null)}
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-foreground/5 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
