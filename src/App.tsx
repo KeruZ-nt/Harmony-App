@@ -10,7 +10,6 @@ import { StudentLayout } from './components/layout/StudentLayout';
 
 // Auth Pages (Assuming these exist or we will adapt them)
 import { Login } from './pages/auth/Login';
-import { Register } from './pages/auth/Register';
 import { ResetPassword } from './pages/auth/ResetPassword';
 
 // Main Pages
@@ -50,7 +49,6 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Routes */}
