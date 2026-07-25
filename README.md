@@ -15,7 +15,6 @@ Construido con un enfoque en **diseño premium**, **alta usabilidad** (basado en
 
 ### ✨ Características Principales
 
-- 🏢 **Soporte Multi-Academia (Workspaces):** Administra diferentes sucursales o negocios desde una sola cuenta.
 - 🎓 **Gestión de Alumnos y Planes:** Seguimiento de alumnos por plan (Mensual, Trimestral), frecuencia de asistencia y perfiles vinculados.
 - 📅 **Calendario Inteligente (Schedule):** Panel visual con *drag & drop* para reagendar clases. Sistema automático para **bloquear días y feriados** que desplaza inteligentemente todas las clases en el tiempo sin perder sesiones.
 - 👥 **Gestión de Equipo:** Sistema de roles (Propietario, Admin, Colaborador, Alumno) con invitaciones seguras.
