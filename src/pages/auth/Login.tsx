@@ -138,21 +138,24 @@ export function Login() {
     }
   };
 
+  const inputClasses = "w-full bg-white/5 border border-white/10 text-white text-sm rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white/10 block pl-11 p-3.5 transition-all outline-none placeholder:text-slate-500";
+  const iconClasses = "absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400";
+  const labelClasses = "block text-sm font-medium text-slate-300 mb-1.5 ml-1";
+
   return (
-    <div className="min-h-screen flex w-full bg-background relative overflow-hidden">
-      {/* Background gradients for mobile */}
-      <div className="lg:hidden absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="lg:hidden absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-500/20 rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen flex w-full bg-slate-950 relative overflow-hidden text-slate-200">
+      
+      {/* Universal Background gradients */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950"></div>
+        <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[70%] bg-purple-900/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-cyan-900/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <div className="absolute inset-0 bg-grid-white/[0.02]"></div>
+      </div>
 
       {/* Left Panel - Information (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative flex-col justify-between p-12 overflow-hidden bg-slate-900 text-white">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900/40 via-slate-900 to-slate-900"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-900/30 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-cyan-900/30 rounded-full blur-3xl"></div>
-          <div className="absolute inset-0 bg-grid-white/[0.02]"></div>
-        </div>
-
+      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative flex-col justify-between p-12 overflow-hidden bg-slate-950/50 backdrop-blur-sm border-r border-white/5 text-white z-10">
+        
         <div className="z-10 relative">
           <div className="flex items-center gap-3 font-display text-2xl font-bold mb-16">
             <div className="bg-gradient-to-br from-[#0082cc] to-[#e86d11] p-2.5 rounded-xl shadow-lg flex items-center justify-center">
@@ -164,23 +167,23 @@ export function Login() {
           <h1 className="text-4xl xl:text-5xl font-black mb-6 leading-tight">
             La manera más inteligente de gestionar tu academia.
           </h1>
-          <p className="text-slate-300 text-lg xl:text-xl max-w-md">
+          <p className="text-slate-400 text-lg xl:text-xl max-w-md">
             Control de asistencia, pagos, alumnos y profesores en un solo lugar. 
             Desarrollado para la excelencia musical.
           </p>
         </div>
 
-        <div className="z-10 relative mt-auto border border-white/10 bg-white/5 backdrop-blur-sm p-6 rounded-2xl max-w-md">
+        <div className="z-10 relative mt-auto border border-white/10 bg-white/5 backdrop-blur-md p-6 rounded-3xl max-w-md shadow-2xl">
           <div className="flex items-center gap-4 mb-4">
             <div className="flex -space-x-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className={`w-10 h-10 rounded-full border-2 border-slate-900 bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold`}>
+                <div key={i} className={`w-10 h-10 rounded-full border-2 border-slate-900 bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold shadow-lg`}>
                   M{i}
                 </div>
               ))}
             </div>
             <div className="text-sm">
-              <p className="font-bold">Únete a cientos de directores</p>
+              <p className="font-bold text-white">Únete a cientos de directores</p>
               <p className="text-slate-400">que ya modernizaron su gestión</p>
             </div>
           </div>
@@ -190,7 +193,10 @@ export function Login() {
       {/* Right Panel - Auth Forms */}
       <div className="w-full lg:w-7/12 xl:w-1/2 flex items-center justify-center p-4 sm:p-8 relative z-10">
         <div className="w-full max-w-[440px] relative">
-          <div className="glass rounded-3xl p-6 sm:p-10 shadow-2xl border border-white/20">
+          <div className="bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 sm:p-10 shadow-2xl border border-white/10 relative overflow-hidden">
+            
+            {/* Subtle glow inside the card */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
             
             <div className="flex justify-center mb-6 lg:hidden">
               <div className="bg-gradient-to-br from-[#0082cc] to-[#e86d11] p-3 rounded-2xl shadow-lg shadow-[#0082cc]/30 flex items-center justify-center overflow-hidden">
@@ -198,11 +204,11 @@ export function Login() {
               </div>
             </div>
             
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2 font-display">
+            <div className="text-center mb-8 relative z-10">
+              <h2 className="text-3xl font-bold tracking-tight text-white mb-2 font-display">
                 {isLogin ? 'Bienvenido de nuevo' : 'Crear Cuenta'}
               </h2>
-              <p className="text-muted-foreground text-sm h-5">
+              <p className="text-slate-400 text-sm h-5">
                 {isLogin 
                   ? 'Inicia sesión en tu cuenta de Harmony' 
                   : hasInvitation 
@@ -212,62 +218,59 @@ export function Login() {
             </div>
 
             {/* Toggle Switch */}
-            <div className="flex p-1 bg-muted/60 rounded-xl mb-8 border border-border/50">
+            <div className="flex p-1 bg-black/20 rounded-xl mb-8 border border-white/5 relative z-10">
               <button 
                 type="button"
-                onClick={() => {
-                  setIsLogin(true);
-                  // Opcional: limpiar campos al cambiar
-                }}
-                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all duration-300 ${isLogin ? 'bg-card shadow-sm text-foreground border border-border/50' : 'text-muted-foreground hover:text-foreground'}`}
+                onClick={() => setIsLogin(true)}
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all duration-300 ${isLogin ? 'bg-white/10 shadow-lg text-white border border-white/10' : 'text-slate-400 hover:text-white'}`}
               >
                 Ingresar
               </button>
               <button 
                 type="button"
                 onClick={() => setIsLogin(false)}
-                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all duration-300 ${!isLogin ? 'bg-card shadow-sm text-foreground border border-border/50' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all duration-300 ${!isLogin ? 'bg-white/10 shadow-lg text-white border border-white/10' : 'text-slate-400 hover:text-white'}`}
               >
                 Registrarse
               </button>
             </div>
 
-            <div className="relative overflow-hidden">
+            <div className="relative overflow-visible z-10">
               {/* LOGIN FORM */}
               {isLogin && (
                 <div className="animate-in fade-in zoom-in-95 duration-300">
                   <form onSubmit={handleLogin} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Correo Electrónico</label>
+                      <label className={labelClasses}>Correo Electrónico</label>
                       <div className="relative">
-                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <Mail className={iconClasses} />
                         <input
                           type="email"
                           required
                           value={email}
                           onChange={handleEmailChange}
-                          className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
+                          className={inputClasses}
                           placeholder="correo@ejemplo.com"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Contraseña</label>
+                      <label className={labelClasses}>Contraseña</label>
                       <div className="relative">
-                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <Lock className={iconClasses} />
                         <input
                           type={showPassword ? "text" : "password"}
                           required
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 pr-11 p-3.5 transition-all outline-none"
+                          className={`${inputClasses} pr-11`}
                           placeholder="••••••••"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
                         >
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
@@ -277,7 +280,7 @@ export function Login() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-lg shadow-primary/30 disabled:opacity-70 disabled:cursor-not-allowed mt-6"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-[0_0_20px_rgba(79,70,229,0.3)] disabled:opacity-70 disabled:cursor-not-allowed mt-8 border border-indigo-400/20"
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -297,15 +300,15 @@ export function Login() {
                 <div className="animate-in fade-in zoom-in-95 duration-300">
                   <form onSubmit={handleRegister} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Correo Electrónico</label>
+                      <label className={labelClasses}>Correo Electrónico</label>
                       <div className="relative">
-                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <Mail className={iconClasses} />
                         <input
                           type="email"
                           required
                           value={email}
                           onChange={handleEmailChange}
-                          className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
+                          className={inputClasses}
                           placeholder="correo@ejemplo.com"
                         />
                       </div>
@@ -313,12 +316,12 @@ export function Login() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Tu Nombre</label>
+                        <label className={labelClasses}>Tu Nombre</label>
                         <div className="relative">
                           {isNameLocked ? (
-                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                            <Lock className={iconClasses} />
                           ) : (
-                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                            <User className={iconClasses} />
                           )}
                           <input
                             type="text"
@@ -326,7 +329,7 @@ export function Login() {
                             readOnly={isNameLocked}
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
-                            className={`w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none ${isNameLocked ? 'opacity-80 bg-muted/20 cursor-not-allowed' : ''}`}
+                            className={`${inputClasses} ${isNameLocked ? 'opacity-70 bg-black/20 cursor-not-allowed' : ''}`}
                             placeholder="Juan Pérez"
                           />
                         </div>
@@ -334,15 +337,15 @@ export function Login() {
 
                       {!hasInvitation && (
                         <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                          <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Academia</label>
+                          <label className={labelClasses}>Academia</label>
                           <div className="relative">
-                            <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                            <Building className={iconClasses} />
                             <input
                               type="text"
                               required={!hasInvitation}
                               value={workspaceName}
                               onChange={(e) => setWorkspaceName(e.target.value)}
-                              className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
+                              className={inputClasses}
                               placeholder="Escuela Musical"
                             />
                           </div>
@@ -351,82 +354,82 @@ export function Login() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Contraseña</label>
+                      <label className={labelClasses}>Contraseña</label>
                       <div className="relative">
-                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <Lock className={iconClasses} />
                         <input
                           type={showPassword ? "text" : "password"}
                           required
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 pr-11 p-3.5 transition-all outline-none"
+                          className={`${inputClasses} pr-11`}
                           placeholder="••••••••"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
                         >
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
                       
                       {/* Validation Indicators */}
-                      <div className="bg-card/30 border border-border/50 rounded-xl p-3 grid grid-cols-2 gap-2 mt-2">
+                      <div className="bg-black/20 border border-white/5 rounded-xl p-3 grid grid-cols-2 gap-2 mt-2">
                         <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                          {passwordValidations.length ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
-                          <span className={passwordValidations.length ? 'text-foreground' : 'text-muted-foreground'}>Mínimo 8 chars</span>
+                          {passwordValidations.length ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
+                          <span className={passwordValidations.length ? 'text-slate-200' : 'text-slate-500'}>Mínimo 8 chars</span>
                         </div>
                         <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                          {passwordValidations.uppercase ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
-                          <span className={passwordValidations.uppercase ? 'text-foreground' : 'text-muted-foreground'}>Una Mayúscula</span>
+                          {passwordValidations.uppercase ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
+                          <span className={passwordValidations.uppercase ? 'text-slate-200' : 'text-slate-500'}>Una Mayúscula</span>
                         </div>
                         <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                          {passwordValidations.lowercase ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
-                          <span className={passwordValidations.lowercase ? 'text-foreground' : 'text-muted-foreground'}>Una Minúscula</span>
+                          {passwordValidations.lowercase ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
+                          <span className={passwordValidations.lowercase ? 'text-slate-200' : 'text-slate-500'}>Una Minúscula</span>
                         </div>
                         <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                          {passwordValidations.number ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
-                          <span className={passwordValidations.number ? 'text-foreground' : 'text-muted-foreground'}>Un Número</span>
+                          {passwordValidations.number ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
+                          <span className={passwordValidations.number ? 'text-slate-200' : 'text-slate-500'}>Un Número</span>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Confirmar Contraseña</label>
+                      <label className={labelClasses}>Confirmar Contraseña</label>
                       <div className="relative">
-                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <Lock className={iconClasses} />
                         <input
                           type={showConfirmPassword ? "text" : "password"}
                           required
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          className={`w-full bg-card/50 border text-foreground text-sm rounded-2xl block pl-11 pr-11 p-3.5 transition-all outline-none focus:ring-2 ${
+                          className={`w-full bg-white/5 border text-white text-sm rounded-2xl block pl-11 pr-11 p-3.5 transition-all outline-none focus:ring-2 placeholder:text-slate-500 ${
                             confirmPassword && !passwordsMatch 
-                              ? 'border-destructive focus:ring-destructive/20 focus:border-destructive' 
+                              ? 'border-red-500/50 focus:ring-red-500/20 focus:border-red-500' 
                               : confirmPassword && passwordsMatch
-                              ? 'border-green-500 focus:ring-green-500/20 focus:border-green-500'
-                              : 'border-border focus:ring-primary/20 focus:border-primary'
+                              ? 'border-emerald-500/50 focus:ring-emerald-500/20 focus:border-emerald-500'
+                              : 'border-white/10 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white/10'
                           }`}
                           placeholder="••••••••"
                         />
                         <button
                           type="button"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
                         >
                           {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
                       {confirmPassword && !passwordsMatch && (
-                        <p className="text-[11px] sm:text-xs text-destructive mt-1.5 ml-1">Las contraseñas no coinciden</p>
+                        <p className="text-[11px] sm:text-xs text-red-400 mt-1.5 ml-1">Las contraseñas no coinciden</p>
                       )}
                     </div>
 
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-lg shadow-primary/30 disabled:opacity-70 disabled:cursor-not-allowed mt-6"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-[0_0_20px_rgba(79,70,229,0.3)] disabled:opacity-70 disabled:cursor-not-allowed mt-8 border border-indigo-400/20"
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -441,7 +444,6 @@ export function Login() {
                 </div>
               )}
             </div>
-
           </div>
         </div>
       </div>
