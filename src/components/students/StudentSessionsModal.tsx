@@ -230,6 +230,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
       onConfirm: async () => {
         try {
           await shiftSessionsForward(student.id, sessionId, 7);
+          setEditingSessionData(null);
           addToast({ message: 'Clases desplazadas 7 días', type: 'success' });
         } catch (error) {
           addToast({ message: 'Error al desplazar clases', type: 'error' });
@@ -246,6 +247,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
       onConfirm: async () => {
         try {
           await shiftSessionsForward(student.id, sessionId, -7);
+          setEditingSessionData(null);
           addToast({ message: 'Clases retrocedidas 7 días', type: 'success' });
         } catch (error) {
           addToast({ message: 'Error al retroceder clases', type: 'error' });
