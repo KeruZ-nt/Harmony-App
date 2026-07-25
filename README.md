@@ -1,35 +1,36 @@
 <div align="center">
-  <img src="public/logo.svg" alt="Current Logo" width="120" height="120" />
-  <h1>Current V1-b - Sistema Operativo de Almacenes</h1>
-  <p><strong>Plataforma moderna y profesional de gestión de almacenes e inventario.</strong></p>
-  <p><em>"Demostrando que somos una corriente en calma."</em></p>
+  <img src="public/vite.svg" alt="Harmony Logo" width="120" height="120" />
+  <h1>Harmony App - Sistema de Gestión de Academias</h1>
+  <p><strong>Plataforma moderna y profesional para la administración de academias, alumnos y agendamiento inteligente.</strong></p>
+  <p><em>"Gestiona tus clases en perfecta armonía."</em></p>
 </div>
 
 ---
 
-## 🚀 Sobre Current
+## 🚀 Sobre Harmony
 
-**Current** es un sistema inteligente diseñado para la gestión eficiente de múltiples almacenes, control de inventario en tiempo real, registro de transacciones (ventas y compras) y administración de colaboradores. 
+**Harmony App** es un sistema inteligente tipo SaaS diseñado para la gestión eficiente de múltiples academias, control de asistencia, seguimiento de alumnos, portal de estudiantes y manejo de pagos o renovaciones.
 
-Construido con un enfoque en **diseño premium (Clean Light Theme & Bento Grid)**, **alta usabilidad** y **seguridad de datos**, Current permite a las empresas tomar el control total de sus flujos de trabajo sin fricciones, fluyendo como una corriente en calma. Listo para despliegue en Vercel.
+Construido con un enfoque en **diseño premium**, **alta usabilidad** (basado en drag & drop) y **seguridad de datos**, Harmony permite a las instituciones educativas y educadores independientes tomar el control total de sus clases sin fricciones. Listo para despliegue en Vercel.
 
 ### ✨ Características Principales
 
-- 🏢 **Soporte Multi-Almacén:** Administra diferentes tiendas o bodegas desde una sola cuenta.
-- 📦 **Control de Inventario Avanzado:** Seguimiento de stock en tiempo real y alertas de stock mínimo (crítico).
-- 💸 **Registro de Transacciones:** Historial inmutable de compras masivas, ventas y ajustes de stock.
-- 👥 **Gestión de Equipo:** Sistema de roles (Admin/Colaborador) con códigos de invitación seguros.
-- 📊 **Dashboard Ejecutivo:** Gráficos y métricas automáticas sobre ingresos, gastos y rentabilidad mensual en un moderno layout asimétrico.
-- 🎨 **Diseño V1-b (Clean Light):** Interfaz prístina con tipografía dual (`Inter` y `Space Grotesk`), glassmorphism e inspiraciones en paneles técnicos avanzados.
+- 🏢 **Soporte Multi-Academia (Workspaces):** Administra diferentes sucursales o negocios desde una sola cuenta.
+- 🎓 **Gestión de Alumnos y Planes:** Seguimiento de alumnos por plan (Mensual, Trimestral), frecuencia de asistencia y perfiles vinculados.
+- 📅 **Calendario Inteligente (Schedule):** Panel visual con *drag & drop* para reagendar clases. Sistema automático para **bloquear días y feriados** que desplaza inteligentemente todas las clases en el tiempo sin perder sesiones.
+- 💳 **Control de Pagos:** Seguimiento de fechas de vencimiento y renovación de membresías en base a asistencia o fecha.
+- 👥 **Gestión de Equipo:** Sistema de roles (Propietario, Admin, Colaborador, Alumno) con invitaciones seguras.
+- 📱 **Portal del Alumno:** Interfaz dedicada para que los alumnos puedan ver su historial de clases, próximas sesiones y estado de su plan.
+- 🎨 **Diseño Premium:** Interfaz prístina con tipografía `Rubik`, paleta de colores cuidadosamente seleccionada (`#0082cc`, `#e86d11`, `#f4a305`, `#a5d8f7`), glassmorphism y micro-interacciones fluidas.
 
 ## 🛠️ Tecnologías Utilizadas
 
-- **Frontend:** React 18 + TypeScript + Vite
+- **Frontend:** React 19 + TypeScript + Vite
 - **Estilos:** Tailwind CSS v4 + UI Custom Glassmorphism
-- **Estado:** Zustand (Gestión global rápida y ligera)
+- **Estado:** Zustand (Gestión global de auth, workspaces y notificaciones)
 - **Backend / BaaS:** Supabase (PostgreSQL, Autenticación, Row Level Security)
-- **Gráficos:** Recharts
-- **Enrutamiento:** React Router DOM v6
+- **Iconografía:** Lucide React
+- **Enrutamiento:** React Router DOM v7
 - **Despliegue:** Optimizado para Vercel (`vercel.json` incluido)
 
 ## 📦 Instalación y Desarrollo Local
@@ -51,10 +52,9 @@ Construido con un enfoque en **diseño premium (Clean Light Theme & Bento Grid)*
 
 ## 🔒 Seguridad (Supabase RLS)
 
-Current utiliza **Row Level Security (RLS)** a nivel de base de datos para garantizar el aislamiento total de los datos. Ningún usuario puede acceder a la información de un almacén (`workspace`) si no es miembro oficial del mismo. Consulta `ROADMAP.md` para ver el plan de implementaciones de seguridad futuras como MFA y Logs de Auditoría.
+Harmony utiliza **Row Level Security (RLS)** a nivel de base de datos para garantizar el aislamiento total de los datos. Ningún usuario puede acceder a la información de una academia (`workspace`) si no es miembro oficial de la misma, protegiendo totalmente la privacidad de los alumnos y la información financiera.
 
 ---
 <div align="center">
-  Hecho con excelencia para potenciar los negocios modernos. Versión: Current V1-b.
+  Hecho con excelencia para potenciar el sector educativo.
 </div>
-
