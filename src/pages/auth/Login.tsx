@@ -190,7 +190,7 @@ export function Login() {
       {/* Right Panel - Auth Forms */}
       <div className="w-full lg:w-7/12 xl:w-1/2 flex items-center justify-center p-4 sm:p-8 relative z-10">
         <div className="w-full max-w-[440px] relative">
-          <div className="glass rounded-3xl p-8 sm:p-10 shadow-2xl border border-white/20">
+          <div className="glass rounded-3xl p-6 sm:p-10 shadow-2xl border border-white/20">
             
             <div className="flex justify-center mb-6 lg:hidden">
               <div className="bg-gradient-to-br from-[#0082cc] to-[#e86d11] p-3 rounded-2xl shadow-lg shadow-[#0082cc]/30 flex items-center justify-center overflow-hidden">
@@ -232,210 +232,214 @@ export function Login() {
               </button>
             </div>
 
-            <div className="relative">
+            <div className="relative overflow-hidden">
               {/* LOGIN FORM */}
-              <div className={`transition-all duration-500 ease-in-out ${isLogin ? 'opacity-100 scale-100 relative z-10' : 'opacity-0 scale-95 absolute inset-0 z-0 pointer-events-none'}`}>
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Correo Electrónico</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
-                      <input
-                        type="email"
-                        required={isLogin}
-                        value={email}
-                        onChange={handleEmailChange}
-                        className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
-                        placeholder="correo@ejemplo.com"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Contraseña</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        required={isLogin}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 pr-11 p-3.5 transition-all outline-none"
-                        placeholder="••••••••"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-lg shadow-primary/30 disabled:opacity-70 disabled:cursor-not-allowed mt-6"
-                  >
-                    {loading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                      <>
-                        <span>Iniciar Sesión</span>
-                        <ArrowRight className="w-5 h-5" />
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
-
-              {/* REGISTER FORM */}
-              <div className={`transition-all duration-500 ease-in-out ${!isLogin ? 'opacity-100 scale-100 relative z-10' : 'opacity-0 scale-95 absolute inset-0 z-0 pointer-events-none'}`}>
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Correo Electrónico</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
-                      <input
-                        type="email"
-                        required={!isLogin}
-                        value={email}
-                        onChange={handleEmailChange}
-                        className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
-                        placeholder="correo@ejemplo.com"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {isLogin && (
+                <div className="animate-in fade-in zoom-in-95 duration-300">
+                  <form onSubmit={handleLogin} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Tu Nombre</label>
+                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Correo Electrónico</label>
                       <div className="relative">
-                        {isNameLocked ? (
-                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
-                        ) : (
-                          <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
-                        )}
+                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
                         <input
-                          type="text"
-                          required={!isLogin}
-                          readOnly={isNameLocked}
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          className={`w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none ${isNameLocked ? 'opacity-80 bg-muted/20 cursor-not-allowed' : ''}`}
-                          placeholder="Juan Pérez"
+                          type="email"
+                          required
+                          value={email}
+                          onChange={handleEmailChange}
+                          className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
+                          placeholder="correo@ejemplo.com"
                         />
                       </div>
                     </div>
 
-                    {!hasInvitation && (
-                      <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                        <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Academia</label>
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Contraseña</label>
+                      <div className="relative">
+                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 pr-11 p-3.5 transition-all outline-none"
+                          placeholder="••••••••"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-lg shadow-primary/30 disabled:opacity-70 disabled:cursor-not-allowed mt-6"
+                    >
+                      {loading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <>
+                          <span>Iniciar Sesión</span>
+                          <ArrowRight className="w-5 h-5" />
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {/* REGISTER FORM */}
+              {!isLogin && (
+                <div className="animate-in fade-in zoom-in-95 duration-300">
+                  <form onSubmit={handleRegister} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Correo Electrónico</label>
+                      <div className="relative">
+                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <input
+                          type="email"
+                          required
+                          value={email}
+                          onChange={handleEmailChange}
+                          className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
+                          placeholder="correo@ejemplo.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Tu Nombre</label>
                         <div className="relative">
-                          <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                          {isNameLocked ? (
+                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                          ) : (
+                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                          )}
                           <input
                             type="text"
-                            required={!isLogin && !hasInvitation}
-                            value={workspaceName}
-                            onChange={(e) => setWorkspaceName(e.target.value)}
-                            className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
-                            placeholder="Escuela Musical"
+                            required
+                            readOnly={isNameLocked}
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            className={`w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none ${isNameLocked ? 'opacity-80 bg-muted/20 cursor-not-allowed' : ''}`}
+                            placeholder="Juan Pérez"
                           />
                         </div>
                       </div>
-                    )}
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Contraseña</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        required={!isLogin}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 pr-11 p-3.5 transition-all outline-none"
-                        placeholder="••••••••"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
+                      {!hasInvitation && (
+                        <div className="animate-in fade-in slide-in-from-top-2 duration-300">
+                          <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Academia</label>
+                          <div className="relative">
+                            <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                            <input
+                              type="text"
+                              required={!hasInvitation}
+                              value={workspaceName}
+                              onChange={(e) => setWorkspaceName(e.target.value)}
+                              className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none"
+                              placeholder="Escuela Musical"
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    
-                    {/* Validation Indicators */}
-                    <div className="bg-card/30 border border-border/50 rounded-xl p-3 grid grid-cols-2 gap-2 mt-2">
-                      <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                        {passwordValidations.length ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
-                        <span className={passwordValidations.length ? 'text-foreground' : 'text-muted-foreground'}>Mínimo 8 chars</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                        {passwordValidations.uppercase ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
-                        <span className={passwordValidations.uppercase ? 'text-foreground' : 'text-muted-foreground'}>Una Mayúscula</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                        {passwordValidations.lowercase ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
-                        <span className={passwordValidations.lowercase ? 'text-foreground' : 'text-muted-foreground'}>Una Minúscula</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                        {passwordValidations.number ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
-                        <span className={passwordValidations.number ? 'text-foreground' : 'text-muted-foreground'}>Un Número</span>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Confirmar Contraseña</label>
-                    <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        required={!isLogin}
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className={`w-full bg-card/50 border text-foreground text-sm rounded-2xl block pl-11 pr-11 p-3.5 transition-all outline-none focus:ring-2 ${
-                          confirmPassword && !passwordsMatch 
-                            ? 'border-destructive focus:ring-destructive/20 focus:border-destructive' 
-                            : confirmPassword && passwordsMatch
-                            ? 'border-green-500 focus:ring-green-500/20 focus:border-green-500'
-                            : 'border-border focus:ring-primary/20 focus:border-primary'
-                        }`}
-                        placeholder="••••••••"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
-                      >
-                        {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Contraseña</label>
+                      <div className="relative">
+                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full bg-card/50 border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 pr-11 p-3.5 transition-all outline-none"
+                          placeholder="••••••••"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                      
+                      {/* Validation Indicators */}
+                      <div className="bg-card/30 border border-border/50 rounded-xl p-3 grid grid-cols-2 gap-2 mt-2">
+                        <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+                          {passwordValidations.length ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
+                          <span className={passwordValidations.length ? 'text-foreground' : 'text-muted-foreground'}>Mínimo 8 chars</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+                          {passwordValidations.uppercase ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
+                          <span className={passwordValidations.uppercase ? 'text-foreground' : 'text-muted-foreground'}>Una Mayúscula</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+                          {passwordValidations.lowercase ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
+                          <span className={passwordValidations.lowercase ? 'text-foreground' : 'text-muted-foreground'}>Una Minúscula</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+                          {passwordValidations.number ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-muted-foreground/50" />}
+                          <span className={passwordValidations.number ? 'text-foreground' : 'text-muted-foreground'}>Un Número</span>
+                        </div>
+                      </div>
                     </div>
-                    {confirmPassword && !passwordsMatch && (
-                      <p className="text-[11px] sm:text-xs text-destructive mt-1.5 ml-1">Las contraseñas no coinciden</p>
-                    )}
-                  </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-lg shadow-primary/30 disabled:opacity-70 disabled:cursor-not-allowed mt-6"
-                  >
-                    {loading ? (
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : (
-                      <>
-                        <span>{hasInvitation ? 'Unirse a la Academia' : 'Crear Cuenta'}</span>
-                        <ArrowRight className="w-5 h-5" />
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-1.5 ml-1">Confirmar Contraseña</label>
+                      <div className="relative">
+                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70" />
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          required
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className={`w-full bg-card/50 border text-foreground text-sm rounded-2xl block pl-11 pr-11 p-3.5 transition-all outline-none focus:ring-2 ${
+                            confirmPassword && !passwordsMatch 
+                              ? 'border-destructive focus:ring-destructive/20 focus:border-destructive' 
+                              : confirmPassword && passwordsMatch
+                              ? 'border-green-500 focus:ring-green-500/20 focus:border-green-500'
+                              : 'border-border focus:ring-primary/20 focus:border-primary'
+                          }`}
+                          placeholder="••••••••"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-primary transition-colors"
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                      {confirmPassword && !passwordsMatch && (
+                        <p className="text-[11px] sm:text-xs text-destructive mt-1.5 ml-1">Las contraseñas no coinciden</p>
+                      )}
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-600/90 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-lg shadow-primary/30 disabled:opacity-70 disabled:cursor-not-allowed mt-6"
+                    >
+                      {loading ? (
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <>
+                          <span>{hasInvitation ? 'Unirse a la Academia' : 'Crear Cuenta'}</span>
+                          <ArrowRight className="w-5 h-5" />
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
 
           </div>
