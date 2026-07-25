@@ -31,22 +31,73 @@ Construido con un enfoque en **diseño premium**, **alta usabilidad** (basado en
 - **Enrutamiento:** React Router DOM v7
 - **Despliegue:** Optimizado para Vercel (`vercel.json` incluido)
 
-## 📦 Instalación y Desarrollo Local
+## 🗄️ Esquema de Base de Datos (Supabase)
 
-1. Clona este repositorio.
-2. Instala las dependencias:
-   ```bash
-   npm install
-   ```
-3. Configura tus variables de entorno en un archivo `.env` en la raíz del proyecto:
-   ```env
-   VITE_SUPABASE_URL=tu_supabase_url
-   VITE_SUPABASE_ANON_KEY=tu_supabase_anon_key
-   ```
-4. Inicia el servidor de desarrollo:
-   ```bash
-   npm run dev
-   ```
+La arquitectura de datos de Harmony está fuertemente estructurada y basada en el paradigma de Multi-Tenant (`workspace_id`).
+
+```mermaid
+erDiagram
+    WORKSPACES ||--o{ WORKSPACE_INVITATIONS : "tiene"
+    WORKSPACES ||--o{ PROFILES : "pertenece a"
+    WORKSPACES ||--o{ STUDENTS : "tiene"
+    WORKSPACES ||--o{ SESSIONS : "gestiona"
+    WORKSPACES ||--o{ BLOCKED_DAYS : "tiene feriados"
+
+    PROFILES ||--o{ STUDENTS : "puede ser"
+    
+    STUDENTS ||--o{ SESSIONS : "asiste a"
+
+    WORKSPACES {
+        uuid id PK
+        string name
+        string logo_url
+        timestamp created_at
+    }
+
+    WORKSPACE_INVITATIONS {
+        uuid id PK
+        uuid workspace_id FK
+        string email
+        string role
+        timestamp created_at
+    }
+
+    PROFILES {
+        uuid id PK
+        uuid workspace_id FK
+        string role
+        string full_name
+        string email
+    }
+
+    STUDENTS {
+        uuid id PK
+        uuid workspace_id FK
+        uuid profile_id FK
+        string first_name
+        string last_name
+        string schedule_days
+        string plan
+        string frequency
+        string status
+    }
+
+    SESSIONS {
+        uuid id PK
+        uuid workspace_id FK
+        uuid student_id FK
+        string status
+        timestamp start_time
+        timestamp end_time
+    }
+
+    BLOCKED_DAYS {
+        uuid id PK
+        uuid workspace_id FK
+        date date
+        string reason
+    }
+```
 
 ## 🔒 Seguridad (Supabase RLS)
 
