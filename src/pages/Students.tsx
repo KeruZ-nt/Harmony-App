@@ -72,10 +72,6 @@ export default function Students() {
             </div>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-            <div className="shrink-0 flex items-center gap-2 bg-gradient-to-br from-primary/10 to-primary/5 px-4 py-3 rounded-2xl border border-primary/10 shadow-sm">
-              <span className="text-[10px] font-bold text-primary uppercase tracking-widest hidden sm:inline">Total</span>
-              <span className="text-xl font-display font-black text-primary leading-none">{filteredStudents.length}</span>
-            </div>
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary/90 hover:to-indigo-600 text-white px-4 sm:px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:shadow-primary/40"
@@ -84,6 +80,10 @@ export default function Students() {
               <span className="hidden sm:inline">Nuevo Alumno</span>
               <span className="sm:hidden">Nuevo</span>
             </button>
+            <div className="shrink-0 flex items-center gap-2 bg-gradient-to-br from-primary/10 to-primary/5 px-4 py-3 rounded-2xl border border-primary/10 shadow-sm">
+              <span className="text-[9px] font-bold text-primary/60 uppercase tracking-widest">Total</span>
+              <span className="text-xl font-display font-black text-primary leading-none">{filteredStudents.length}</span>
+            </div>
           </div>
         </div>
       </div>
