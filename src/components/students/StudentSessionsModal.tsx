@@ -321,7 +321,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
               No hay clases programadas.
             </div>
           ) : (
-            <div className="grid gap-6 grid-cols-1 items-start">
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 items-start">
               {Object.entries(
                 sessions.reduce((acc, session) => {
                   const day = new Date(session.start_time).getDay();
