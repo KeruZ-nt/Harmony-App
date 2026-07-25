@@ -141,12 +141,33 @@ export function NewStudentModal({ isOpen, onClose }: NewStudentModalProps) {
       }, selectedSchedules);
 
       addToast({ message: 'Alumno registrado correctamente', type: 'success' });
+      resetForm();
       onClose();
     } catch (error: any) {
       addToast({ message: error.message || 'Error al guardar', type: 'error' });
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      first_name: '',
+      last_name: '',
+      schedule_days: '',
+      grade_level: '',
+      contact_name: '',
+      contact_phone: '',
+      contact_email: '',
+      plan: 'Mensual' as PlanType,
+      frequency: '1 vez por semana' as FrequencyType,
+    });
+    setSelectedSchedules([]);
+    setBirthDate('');
+    
+    const d = new Date();
+    setStartDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+    setIsStartDateManuallySet(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
