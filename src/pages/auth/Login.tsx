@@ -172,21 +172,7 @@ export function Login() {
           </p>
         </div>
 
-        <div className="z-10 relative mt-auto border border-border/50 bg-white/80 backdrop-blur-md p-6 rounded-3xl max-w-md shadow-sm">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="flex -space-x-3">
-              {[1, 2, 3].map(i => (
-                <div key={i} className={`w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-[#0082cc] to-[#e86d11] flex items-center justify-center text-xs font-bold shadow-md text-white`}>
-                  M{i}
-                </div>
-              ))}
-            </div>
-            <div className="text-sm">
-              <p className="font-bold text-slate-900">Únete a cientos de directores</p>
-              <p className="text-slate-500 font-medium">que ya modernizaron su gestión</p>
-            </div>
-          </div>
-        </div>
+
       </div>
 
       {/* Right Panel - Auth Forms */}
