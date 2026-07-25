@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
 import type { Student } from '../types';
+import { useWorkspaceStore } from './workspaceStore';
 
 interface StudentState {
   students: Student[];
@@ -95,9 +96,14 @@ export const useStudentStore = create<StudentState>((set) => ({
           // Buscar si el día actual es uno de los días de clase programados
           for (const sched of schedules) {
             if (dayMap[sched.day] === currentDayOfWeek) {
-              const [hours, minutes] = sched.time.split(':').map(Number);
+              const currentDateStr = currentDate.toISOString().split('T')[0];
+              const blockedDays = useWorkspaceStore.getState().blockedDays;
+              const isBlocked = blockedDays.some(b => b.date === currentDateStr);
               
-              const startTime = new Date(currentDate);
+              if (!isBlocked) {
+                const [hours, minutes] = sched.time.split(':').map(Number);
+                
+                const startTime = new Date(currentDate);
               startTime.setHours(hours, minutes, 0, 0);
               
               const endTime = new Date(startTime);
@@ -113,8 +119,9 @@ export const useStudentStore = create<StudentState>((set) => ({
                 google_event_id: null
               });
               
-              sessionsGeneratedCount++;
-              if (sessionsGeneratedCount >= targetSessionsCount) break;
+                sessionsGeneratedCount++;
+                if (sessionsGeneratedCount >= targetSessionsCount) break;
+              }
             }
           }
           currentDate.setDate(currentDate.getDate() + 1);
@@ -237,9 +244,14 @@ export const useStudentStore = create<StudentState>((set) => ({
           
           for (const sched of schedules) {
             if (dayMap[sched.day] === currentDayOfWeek) {
-              const [hours, minutes] = sched.time.split(':').map(Number);
+              const currentDateStr = currentDate.toISOString().split('T')[0];
+              const blockedDays = useWorkspaceStore.getState().blockedDays;
+              const isBlocked = blockedDays.some(b => b.date === currentDateStr);
               
-              const startTime = new Date(currentDate);
+              if (!isBlocked) {
+                const [hours, minutes] = sched.time.split(':').map(Number);
+                
+                const startTime = new Date(currentDate);
               startTime.setHours(hours, minutes, 0, 0);
               
               const endTime = new Date(startTime);
@@ -257,6 +269,7 @@ export const useStudentStore = create<StudentState>((set) => ({
               
               sessionsGeneratedCount++;
               if (sessionsGeneratedCount >= targetSessionsCount) break;
+              }
             }
           }
           currentDate.setDate(currentDate.getDate() + 1);
