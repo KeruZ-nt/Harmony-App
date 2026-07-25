@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useToastStore } from '../../store/toastStore';
-import { X, Calendar, Plus, Trash2, CheckCircle2, Circle, FastForward, Rewind, Edit2, Check, Save } from 'lucide-react';
+import { X, Calendar, CalendarPlus, Plus, Trash2, CheckCircle2, Circle, FastForward, Rewind, Edit2, Check, Save } from 'lucide-react';
 import { DatePicker } from '../ui/DatePicker';
 import { Select } from '../ui/Select';
 import { ConfirmModal } from '../ui/ConfirmModal';
@@ -331,10 +331,11 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                   <button
                     onClick={() => handleAddSession()}
                     disabled={addingSession}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-card border border-border hover:border-primary/50 hover:bg-primary/5 text-primary text-[11px] font-bold rounded-lg transition-all shadow-sm disabled:opacity-50"
+                    className="flex items-center justify-center w-8 h-8 sm:w-auto sm:h-auto sm:px-3 sm:py-1.5 gap-1.5 bg-card border border-border hover:border-primary/50 hover:bg-primary/5 text-primary text-[11px] font-bold rounded-lg transition-all shadow-sm disabled:opacity-50"
+                    title="Añadir Manual"
                   >
-                    <Plus className="w-3.5 h-3.5" />
-                    Añadir Manual
+                    <CalendarPlus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+                    <span className="hidden sm:inline">Añadir Manual</span>
                   </button>
                 </div>
                 <div className="overflow-x-auto -mx-1 sm:mx-0 px-1 sm:px-0">
