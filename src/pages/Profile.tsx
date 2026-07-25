@@ -6,7 +6,7 @@ import { User as UserIcon, Camera, Loader2, Shield, Phone, Mail, Key, X, CheckCi
 import { useRef, useMemo } from 'react';
 
 export default function Profile() {
-  const { profile, setUser } = useAuthStore();
+  const { user, profile, setUser } = useAuthStore();
   const addToast = useToastStore((state) => state.addToast);
   
   const [fullName, setFullName] = useState(profile?.full_name || '');
@@ -149,8 +149,9 @@ export default function Profile() {
     setSavingEmail(true);
     try {
       // 1. Validar la contraseña actual
+      const currentEmail = user?.email || profile.email;
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: profile.email,
+        email: currentEmail,
         password: currentPasswordForEmail
       });
 
@@ -191,8 +192,9 @@ export default function Profile() {
     setSavingPassword(true);
     try {
       // 1. Validar la contraseña actual
+      const currentEmail = user?.email || profile.email;
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: profile.email,
+        email: currentEmail,
         password: currentPassword
       });
 
