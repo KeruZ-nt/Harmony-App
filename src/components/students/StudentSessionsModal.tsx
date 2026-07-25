@@ -268,18 +268,18 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
         <div className="relative overflow-hidden bg-card border-b border-border p-5 sm:px-8 sm:py-6 flex items-start justify-between">
           <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="relative flex items-center gap-4 sm:gap-5 w-full pr-8 sm:pr-0">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-card shadow-sm border border-border/50 text-primary">
-              <Calendar className="w-7 h-7" />
+          <div className="relative flex items-center gap-3 sm:gap-5 w-full pr-10 sm:pr-0">
+            <div className="flex h-10 w-10 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-card shadow-sm border border-border/50 text-primary">
+              <Calendar className="w-5 h-5 sm:w-7 sm:h-7" />
             </div>
-            <div>
-              <h2 className="text-2xl font-bold font-sans text-foreground tracking-tight">
+            <div className="flex flex-col overflow-hidden">
+              <h2 className="text-lg sm:text-2xl leading-tight font-bold font-sans text-foreground tracking-tight truncate">
                 Panel de Asistencia
               </h2>
-              <div className="flex items-center gap-2 mt-1.5">
-                <span className="text-sm font-medium text-muted-foreground">Alumno:</span>
-                <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-                  {student.first_name} {student.last_name}
+              <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-0.5 sm:mt-1.5">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground hidden sm:inline">Alumno:</span>
+                <span className="inline-flex items-center rounded-full bg-primary/10 px-2 sm:px-3 py-0.5 sm:py-1 text-[11px] sm:text-sm font-semibold text-primary max-w-full">
+                  <span className="truncate">{student.first_name} {student.last_name}</span>
                 </span>
               </div>
             </div>
