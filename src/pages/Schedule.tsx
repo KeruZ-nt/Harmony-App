@@ -3,7 +3,7 @@ import { useSessionStore } from '../store/sessionStore';
 import { useWorkspaceStore } from '../store/workspaceStore';
 import { useStudentStore } from '../store/studentStore';
 import { useToastStore } from '../store/toastStore';
-import { ChevronLeft, ChevronRight, Search, CalendarOff, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, CalendarOff, X, Calendar } from 'lucide-react';
 import { DatePicker } from '../components/ui/DatePicker';
 import { Select } from '../components/ui/Select';
 import type { Session } from '../types';

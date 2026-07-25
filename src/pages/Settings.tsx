@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useWorkspaceStore } from '../store/workspaceStore';
 import { useToastStore } from '../store/toastStore';
 import { Select } from '../components/ui/Select';
-import { Settings as SettingsIcon, Users, Mail, Plus, Trash2, Camera, Save } from 'lucide-react';
+import { Settings as SettingsIcon, Users, Mail, Trash2, Camera, Save } from 'lucide-react';
 import type { UserRole } from '../types';
 
 interface Colleague {
