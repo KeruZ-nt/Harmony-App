@@ -185,9 +185,8 @@ export function Login() {
             </div>
           </div>
 
-
+        </div>
       </div>
-
       {/* Right Panel - Auth Forms */}
       <div className="w-full lg:w-7/12 xl:w-1/2 flex items-center justify-center p-4 sm:p-8 md:p-12 relative z-10 overflow-y-auto">
         <div className="w-full max-w-[420px] relative my-auto">
