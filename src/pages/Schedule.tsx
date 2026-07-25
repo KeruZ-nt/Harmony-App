@@ -390,7 +390,7 @@ export default function Schedule() {
                           )}
                           <div className="flex items-center justify-between gap-1 h-full relative z-10">
                             <div className={`font-display font-bold text-xs sm:text-sm truncate leading-tight ${
-                              session.status === 'Asistió' || session.status === 'Falta' || session.status === 'Feriado' || session.status === 'Completada' ? '' : 'text-foreground'
+                              session.status === 'Completada' ? 'text-white' : ''
                             }`}>
                               {session.students?.first_name} <span className="hidden sm:inline">{session.students?.last_name}</span>
                             </div>
