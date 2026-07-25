@@ -21,6 +21,7 @@ export type AppNotification = ExpirationNotification | SystemNotification;
 interface NotificationState {
   notifications: AppNotification[];
   unreadCount: number;
+  initialFetchDone: boolean;
   fetchNotifications: (workspaceId: string) => Promise<void>;
   subscribeToWorkspace: (workspaceId: string) => void;
   unsubscribeFromWorkspace: () => void;
