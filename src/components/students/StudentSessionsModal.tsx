@@ -265,11 +265,10 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/20 backdrop-blur-sm animate-in fade-in duration-200 p-4">
       <div className="bg-card w-[95vw] max-w-7xl rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-start sm:items-center justify-between p-6 sm:p-8 border-b border-border/50 bg-card relative overflow-hidden">
-          {/* Decorative background blur */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-900 border-b border-border p-5 sm:px-8 sm:py-6 flex items-start justify-between">
           <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="relative flex items-center gap-5">
+          <div className="relative flex items-center gap-4 sm:gap-5 w-full pr-8 sm:pr-0">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-card shadow-sm border border-border/50 text-primary">
               <Calendar className="w-7 h-7" />
             </div>
@@ -285,7 +284,8 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="relative p-2.5 bg-card/50 hover:bg-card rounded-xl border border-border/50 shadow-sm transition-all text-muted-foreground hover:text-muted-foreground dark:hover:text-slate-200">
+
+          <button onClick={onClose} className="absolute top-5 right-5 sm:relative sm:top-0 sm:right-0 p-2.5 bg-card/50 hover:bg-card rounded-xl border border-border/50 shadow-sm transition-all text-muted-foreground hover:text-muted-foreground dark:hover:text-slate-200">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -337,8 +337,8 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                     Añadir Manual
                   </button>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
+                <div className="overflow-x-auto -mx-1 sm:mx-0 px-1 sm:px-0">
+                  <table className="w-full text-sm text-left min-w-[500px] sm:min-w-0">
                     <thead className="bg-muted border-b border-border/50 text-[10px] font-bold uppercase text-muted-foreground">
                       <tr>
                         <th className="px-3 py-2 text-center w-8">Nº</th>
