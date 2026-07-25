@@ -11,6 +11,7 @@ interface Colleague {
   email: string | null;
   role: UserRole;
   full_name: string | null;
+  avatar_url?: string | null;
 }
 
 interface Invitation {
@@ -54,7 +55,7 @@ export default function Settings() {
     if (!activeWorkspace) return;
     const { data } = await supabase
       .from('profiles')
-      .select('id, email, role, full_name')
+      .select('id, email, role, full_name, avatar_url')
       .eq('workspace_id', activeWorkspace.id)
       .neq('role', 'student');
     if (data) setColleagues(data as any);
