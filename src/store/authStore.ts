@@ -29,10 +29,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       .eq('id', user.id)
       .single();
       
-    set({ user, profile: profile as Profile | null, loading: false });
     // Use background=true so wsLoading never flips to true on token refresh,
     // which would cause ProtectedRoute to flash the loading spinner.
-    useWorkspaceStore.getState().fetchWorkspaces(user.id, true);
+    await useWorkspaceStore.getState().fetchWorkspaces(user.id, true);
+    
+    set({ user, profile: profile as Profile | null, loading: false });
   },
   signOut: async () => {
     await supabase.auth.signOut();

@@ -1,101 +1,157 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
-import type { Notification } from '../types';
 
-interface NotificationState {
-  notifications: Notification[];
-  unreadCount: number;
-  loading: boolean;
-  fetchNotifications: (userId: string) => Promise<void>;
-  markAsRead: (id: string) => Promise<void>;
-  markAllAsRead: (userId: string) => Promise<void>;
-  clearAllNotifications: (userId: string) => Promise<void>;
-  addNotification: (notification: Notification) => void;
-  subscribeToNotifications: (userId: string) => () => void;
+export interface ExpirationNotification {
+  id: string;
+  type: 'expiration';
+  studentId: string;
+  studentName: string;
+  remainingClasses: number;
 }
 
-export const useNotificationStore = create<NotificationState>((set, get) => ({
+export interface SystemNotification {
+  id: string;
+  type: 'system';
+  message: string;
+  createdAt: string;
+}
+
+export type AppNotification = ExpirationNotification | SystemNotification;
+
+interface NotificationState {
+  notifications: AppNotification[];
+  unreadCount: number;
+  fetchNotifications: (workspaceId: string) => Promise<void>;
+  subscribeToWorkspace: (workspaceId: string) => void;
+  unsubscribeFromWorkspace: () => void;
+  markAsRead: () => void;
+}
+
+let realtimeSubscription: any = null;
+
+export const useNotificationStore = create<NotificationState>((set) => ({
   notifications: [],
   unreadCount: 0,
-  loading: false,
 
-  fetchNotifications: async (userId: string) => {
-    set({ loading: true });
-    const { data, error } = await supabase
-      .from('notifications')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(50);
+  fetchNotifications: async (workspaceId: string) => {
+    try {
+      const { data: studentsData, error: studentsError } = await supabase
+        .from('students')
+        .select('id, first_name, last_name')
+        .eq('workspace_id', workspaceId)
+        .eq('status', 'Activo');
 
-    if (!error && data) {
-      const notifs = data as Notification[];
-      set({
-        notifications: notifs,
-        unreadCount: notifs.filter((n) => !n.read).length,
-        loading: false,
+      if (studentsError) throw studentsError;
+      if (!studentsData || studentsData.length === 0) return;
+
+      const activeStudentIds = studentsData.map(s => s.id);
+
+      const { data: sessionsData, error: sessionsError } = await supabase
+        .from('sessions')
+        .select('student_id')
+        .eq('workspace_id', workspaceId)
+        .eq('status', 'Programada')
+        .in('student_id', activeStudentIds);
+
+      if (sessionsError) throw sessionsError;
+
+      const sessionCounts: Record<string, number> = {};
+      sessionsData?.forEach(s => {
+        sessionCounts[s.student_id] = (sessionCounts[s.student_id] || 0) + 1;
       });
-    } else {
-      set({ loading: false });
+
+      const expiring: ExpirationNotification[] = [];
+      
+      studentsData.forEach(student => {
+        const count = sessionCounts[student.id] || 0;
+        if (count <= 2) {
+          expiring.push({
+            id: `exp-${student.id}`,
+            type: 'expiration',
+            studentId: student.id,
+            studentName: `${student.first_name} ${student.last_name}`,
+            remainingClasses: count
+          });
+        }
+      });
+
+      set(state => {
+        const systemNotifs = state.notifications.filter(n => n.type === 'system');
+        const allNotifs = [...systemNotifs, ...expiring];
+        
+        // Calculate diff for unread count
+        const currentExpIds = state.notifications.filter(n => n.type === 'expiration').map(n => n.id);
+        const newExpNotifs = expiring.filter(n => !currentExpIds.includes(n.id));
+        
+        return { 
+          notifications: allNotifs,
+          unreadCount: state.unreadCount + newExpNotifs.length
+        };
+      });
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
     }
   },
 
-  markAsRead: async (id: string) => {
-    await supabase.from('notifications').update({ read: true }).eq('id', id);
-    set((state) => ({
-      notifications: state.notifications.map((n) =>
-        n.id === id ? { ...n, read: true } : n
-      ),
-      unreadCount: Math.max(0, state.unreadCount - 1),
-    }));
-  },
+  subscribeToWorkspace: (workspaceId: string) => {
+    if (realtimeSubscription) {
+      supabase.removeChannel(realtimeSubscription);
+    }
 
-  markAllAsRead: async (userId: string) => {
-    await supabase
-      .from('notifications')
-      .update({ read: true })
-      .eq('user_id', userId)
-      .eq('read', false);
-    set((state) => ({
-      notifications: state.notifications.map((n) => ({ ...n, read: true })),
-      unreadCount: 0,
-    }));
-  },
-
-  clearAllNotifications: async (userId: string) => {
-    await supabase.from('notifications').delete().eq('user_id', userId);
-    set({
-      notifications: [],
-      unreadCount: 0,
-    });
-  },
-
-  addNotification: (notification: Notification) => {
-    set((state) => ({
-      notifications: [notification, ...state.notifications],
-      unreadCount: state.unreadCount + 1,
-    }));
-  },
-
-  subscribeToNotifications: (userId: string) => {
-    const channel = supabase
-      .channel(`notifications:${userId}`)
+    realtimeSubscription = supabase.channel('public:profiles')
       .on(
         'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${userId}`,
-        },
+        { event: 'INSERT', schema: 'public', table: 'profiles', filter: `workspace_id=eq.${workspaceId}` },
         (payload) => {
-          get().addNotification(payload.new as Notification);
+          const newProfile = payload.new;
+          if (newProfile.role === 'student') {
+            const newNotif: SystemNotification = {
+              id: `sys-${newProfile.id}`,
+              type: 'system',
+              message: `¡El alumno ${newProfile.full_name || 'Nuevo'} se ha registrado!`,
+              createdAt: new Date().toISOString()
+            };
+            set(state => ({
+              notifications: [newNotif, ...state.notifications],
+              unreadCount: state.unreadCount + 1
+            }));
+            
+            // Reproducir sonido sutil de notificación
+            try {
+              const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+              const audioCtx = new AudioContext();
+              const oscillator = audioCtx.createOscillator();
+              const gainNode = audioCtx.createGain();
+              
+              oscillator.type = 'sine';
+              oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
+              oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1); // Drop to A4
+              
+              gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+              gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3); // Fade out quickly
+              
+              oscillator.connect(gainNode);
+              gainNode.connect(audioCtx.destination);
+              
+              oscillator.start();
+              oscillator.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {
+              console.error('No se pudo reproducir el sonido de notificación', e);
+            }
+          }
         }
       )
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   },
+
+  unsubscribeFromWorkspace: () => {
+    if (realtimeSubscription) {
+      supabase.removeChannel(realtimeSubscription);
+      realtimeSubscription = null;
+    }
+  },
+
+  markAsRead: () => {
+    set({ unreadCount: 0 });
+  }
 }));

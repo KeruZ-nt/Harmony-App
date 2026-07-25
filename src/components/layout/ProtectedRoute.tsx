@@ -1,4 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
 import { useWorkspaceStore } from '../../store/workspaceStore';
 
@@ -19,15 +21,35 @@ export const ProtectedRoute = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // Check if profile is incomplete (missing full_name)
-  if (profile && !profile.full_name && location.pathname !== '/welcome') {
-    return <Navigate to="/welcome" replace />;
+  // Si no hay workspace, asumo que algo falló o no ha terminado el registro.
+  // Por simplicidad, si no hay perfil o workspace, mostramos error o redirigimos
+  if (!profile || !activeWorkspace) {
+    return <SignOutAndRedirect />;
   }
 
-  // Allow access to workspaces picker, welcome, and profile without an active workspace
-  if (!activeWorkspace && location.pathname !== '/workspaces' && location.pathname !== '/profile' && location.pathname !== '/welcome') {
-    return <Navigate to="/workspaces" replace />;
+  const role = profile.role;
+
+  // Lógica de ruteo basado en Rol
+  if (role === 'student') {
+    // Si es estudiante, permitimos /student-portal y /profile
+    if (location.pathname !== '/student-portal' && location.pathname !== '/profile') {
+      return <Navigate to="/student-portal" replace />;
+    }
+  } else {
+    // Si es admin/owner y trata de ir al portal de alumno, mandarlo al dashboard
+    if (location.pathname === '/student-portal') {
+      return <Navigate to="/" replace />;
+    }
   }
 
   return <Outlet />;
+};
+
+// Componente auxiliar para desloguear y redirigir
+const SignOutAndRedirect = () => {
+  useEffect(() => {
+    supabase.auth.signOut();
+  }, []);
+  
+  return <Navigate to="/login" replace />;
 };

@@ -44,8 +44,8 @@ export const ConfirmModal = ({
   const colors = colorClasses[variant];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200 p-4">
-      <div className="w-full max-w-md rounded-2xl glass border-black/10 p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200 p-4">
+      <div className="w-full max-w-md rounded-2xl glass border-border p-6 shadow-2xl animate-in zoom-in-95 duration-200">
         <div className="flex flex-col items-center gap-4 text-center">
           <div className={`flex h-16 w-16 items-center justify-center rounded-full border ${colors.icon}`}>
             <AlertTriangle className="h-8 w-8" />
@@ -60,7 +60,7 @@ export const ConfirmModal = ({
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="rounded-xl border border-black/10 bg-black/5 px-4 py-2 text-sm font-medium hover:bg-black/10 transition-colors disabled:opacity-50"
+            className="rounded-xl border border-border bg-foreground/5 px-4 py-2 text-sm font-medium hover:bg-black/10 transition-colors disabled:opacity-50"
           >
             {cancelText}
           </button>

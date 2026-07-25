@@ -1,10 +1,10 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&display=swap');
 
 @layer base {
   :root {
     /* Light Mode defaults */
-    --background: 0 0% 98%; /* Light Gray / Off white */
+    --background: 210 40% 96%; /* Slightly darker gray for better glass contrast */
     --foreground: 222 47% 11%; /* Dark Slate */
 
     /* Glass surfaces */
@@ -14,19 +14,19 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Brand Accent - Cyber Cyan / Neon but darker for contrast */
-    --primary: 199 89% 48%; /* #0ea5e9 (Sky 500) */
+    /* Brand Accent - Harmony Blue */
+    --primary: 202 100% 40%; /* #0082cc */
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary Accent - Deep Tech Blue */
-    --secondary: 221 83% 53%; /* #3b82f6 (Blue 500) */
+    /* Secondary Accent - Harmony Orange */
+    --secondary: 26 86% 49%; /* #e86d11 */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%; /* #64748b */
+    --muted: 210 40% 96.1%; /* Neutral light gray */
+    --muted-foreground: 215.4 16.3% 46.9%; /* Slate gray for text */
 
-    /* Positive Actions - Emerald */
-    --accent: 142 71% 45%;
+    /* Positive Actions - Yellow Orange */
+    --accent: 39 96% 49%; /* #f4a305 */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -35,8 +35,7 @@
     /* Soft inner borders */
     --border: 214 32% 91%; /* #e2e8f0 */
     --input: 214 32% 91%;
-    --ring: 199 89% 48%; /* Sky ring */
-
+    --ring: 202 100% 40%; /* Primary Blue ring */
     --radius: 0.75rem;
   }
 }
@@ -67,8 +66,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
   
-  --font-sans: 'Inter', sans-serif;
-  --font-tech: 'Space Grotesk', monospace;
+  --font-sans: 'Rubik', sans-serif;
+  --font-display: 'Rubik', sans-serif;
+  --font-tech: 'Rubik', sans-serif;
 }
 
 @layer base {
@@ -78,12 +78,55 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'Inter', sans-serif;
+    font-family: 'Rubik', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Clear/Light bg base */
-    background-image: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08), transparent 60%);
+    background-image: radial-gradient(circle at 50% 0%, rgba(0, 130, 204, 0.08), transparent 60%);
     background-attachment: fixed;
+  }
+
+  /* Notification Ring Animation */
+  @keyframes ring {
+    0%, 100% { transform: rotate(0deg); }
+    5% { transform: rotate(15deg); }
+    10% { transform: rotate(-10deg); }
+    15% { transform: rotate(15deg); }
+    20% { transform: rotate(-10deg); }
+    25% { transform: rotate(0deg); }
+  }
+  .animate-ring {
+    animation: ring 2.5s ease-in-out infinite;
+  }
+  /* Page Transitions */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in-up {
+    animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
   }
 }
 
@@ -93,10 +136,15 @@
     @apply bg-card/60 backdrop-blur-xl border border-black/[0.05] shadow-lg;
   }
   .glass-hover {
-    @apply hover:bg-card/80 hover:border-black/10 transition-all duration-300;
+    @apply hover:bg-card/90 hover:border-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300;
+  }
+  
+  /* Button global interactions */
+  button {
+    @apply active:scale-[0.97] transition-all;
   }
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-sky-500 to-blue-600;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#0082cc] to-[#e86d11];
   }
   .bg-grid {
     background-size: 40px 40px;
@@ -106,3 +154,8 @@
   }
 }
 
+/* Hide Microsoft Edge native password reveal icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}

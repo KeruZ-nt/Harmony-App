@@ -5,24 +5,23 @@ import { useAuthStore } from './store/authStore';
 
 // Layouts
 import { MainLayout } from './components/layout/MainLayout';
-import { TopNavLayout } from './components/layout/TopNavLayout';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
+import { StudentLayout } from './components/layout/StudentLayout';
 
-// Pages
+// Auth Pages (Assuming these exist or we will adapt them)
 import { Login } from './pages/auth/Login';
 import { Register } from './pages/auth/Register';
 import { ResetPassword } from './pages/auth/ResetPassword';
-import { Dashboard } from './pages/Dashboard';
 
-import { Inventory } from './pages/Inventory';
-import { Purchases } from './pages/Purchases';
-import { Sales } from './pages/Sales';
-import { History } from './pages/History';
-import { Suppliers } from './pages/Suppliers';
-import { Team } from './pages/Team';
-import { ProfileSettings } from './pages/ProfileSettings';
-import { Workspaces } from './pages/Workspaces';
-import { WelcomeProfile } from './pages/auth/WelcomeProfile';
+// Main Pages
+import Dashboard from './pages/Dashboard';
+import Students from './pages/Students';
+import Schedule from './pages/Schedule';
+import Payments from './pages/Payments';
+import Settings from './pages/Settings';
+import StudentPortal from './pages/StudentPortal';
+import Profile from './pages/Profile';
+
 import { ToastContainer } from './components/ui/Toast';
 
 function App() {
@@ -34,9 +33,6 @@ function App() {
       setUser(session?.user ?? null);
     });
 
-    // Listen for changes on auth state (log in, log out, etc.)
-    // We ignore TOKEN_REFRESHED / INITIAL_SESSION to prevent unnecessary
-    // re-fetches when the tab regains focus in the background.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -59,20 +55,22 @@ function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route element={<TopNavLayout />}>
-            <Route path="/welcome" element={<WelcomeProfile />} />
-            <Route path="/workspaces" element={<Workspaces />} />
-            <Route path="/profile" element={<ProfileSettings />} />
-          </Route>
+          
+          {/* Admin Routes */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/sales" element={<Sales />} />
-            <Route path="/purchases" element={<Purchases />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/suppliers" element={<Suppliers />} />
-            <Route path="/team" element={<Team />} />
+            <Route path="/students" element={<Students />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/payments" element={<Payments />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
+
+          {/* Student Routes & Shared (Profile) */}
+          <Route element={<StudentLayout />}>
+            <Route path="/student-portal" element={<StudentPortal />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+
         </Route>
       </Routes>
     </Router>

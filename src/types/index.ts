@@ -1,86 +1,67 @@
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  sku: string;
-  price: number;
-  stock: number;
-  min_stock: number;
-  category: string;
-  created_at?: string;
-}
-
-export interface Transaction {
-  id: string;
-  movement_id?: string;
-  product_id: string;
-  product_name_snapshot?: string;
-  type: 'sale' | 'purchase' | 'creation' | 'adjustment' | 'deletion';
-  quantity: number;
-  total_price: number;
-  created_at?: string;
-  // Relacional
-  product?: Product;
-}
+export type UserRole = 'owner' | 'admin' | 'student';
+export type StudentStatus = 'Activo' | 'Pausa' | 'Cesado';
+export type PlanType = 'Mensual' | 'Trimestral' | 'Semestral';
+export type FrequencyType = '1 vez por semana' | '2 veces por semana';
 
 export interface Profile {
   id: string;
-  email: string;
-  full_name?: string;
-  phone?: string;
-  avatar_url?: string;
-  created_at?: string;
+  workspace_id: string;
+  role: UserRole;
+  full_name: string | null;
+  email: string | null;
+  phone?: string | null;
+  avatar_url?: string | null;
+  created_at: string;
 }
 
 export interface Workspace {
   id: string;
   name: string;
-  invite_code: string;
-  created_by?: string;
-  settings?: any;
-  created_at?: string;
+  logo_url?: string;
+  google_calendar_token: string | null;
+  created_at: string;
 }
 
-export interface WorkspaceMember {
+export interface Student {
   id: string;
   workspace_id: string;
-  user_id: string;
-  role: 'admin' | 'collaborator';
-  created_at?: string;
+  profile_id: string | null;
   
-  // Relacional
-  profile?: Profile;
-  workspace?: Workspace;
+  first_name: string;
+  last_name: string;
+  schedule_days: string | null;
+  grade_level: string | null;
+  birth_date: string | null;
+  age: number | null;
+  
+  contact_name: string | null;
+  contact_phone: string | null;
+  contact_email: string | null;
+  
+  plan: PlanType;
+  frequency: FrequencyType;
+  status: StudentStatus;
+  start_date: string;
+  next_payment_date: string | null;
+  cese_date: string | null;
+  
+  created_at: string;
 }
 
-export interface AccessRequest {
+export interface Session {
   id: string;
   workspace_id: string;
-  user_id: string;
-  status: 'pending' | 'accepted' | 'rejected';
-  created_at?: string;
-  // Relacional
-  profile?: Profile;
-  workspace?: Workspace;
-}
-
-export interface Notification {
-  id: string;
-  user_id: string;
-  type: 'access_request' | 'access_accepted' | 'access_rejected';
-  title: string;
-  message: string;
-  data: Record<string, any>;
-  read: boolean;
-  created_at?: string;
-}
-
-export interface Supplier {
-  id: string;
-  name: string;
-  website?: string;
-  contact_info?: string;
-  category?: string;
-  notes?: string;
-  created_at?: string;
+  student_id: string;
+  start_time: string; // ISO String
+  end_time: string; // ISO String
+  observation: string | null;
+  status: 'Programada' | 'Asistió' | 'Falta' | 'Feriado' | 'Reprogramada' | 'Corrida' | string; // Keep flexible as requested, defaulting to Programada/Asistió
+  google_event_id: string | null;
+  created_at: string;
+  students?: {
+    first_name: string;
+    last_name: string;
+    plan: PlanType;
+    status: StudentStatus;
+  };
 }

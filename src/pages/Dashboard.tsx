@@ -1,323 +1,381 @@
 import { useState, useEffect } from 'react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  Legend
-} from 'recharts';
-import { 
-  DollarSign, 
-  ArrowRightLeft, 
-  AlertTriangle,
-  Calendar as CalendarIcon,
-  TrendingUp,
-  TrendingDown,
-  Loader2
-} from 'lucide-react';
-
-/**
- * Componente Dashboard
- * Vista principal del almacén activo que muestra un resumen ejecutivo.
- * Calcula ingresos, gastos, métricas en tiempo real y gráficos.
- */
-import { supabase } from '../lib/supabase';
-import type { Product, Transaction } from '../types';
+import { useAuthStore } from '../store/authStore';
 import { useWorkspaceStore } from '../store/workspaceStore';
+import { supabase } from '../lib/supabase';
+import { Users, Calendar, Clock, UserPlus, Activity, UserMinus, UsersRound, TrendingUp } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import type { Student } from '../types';
 
-export const Dashboard = () => {
+export default function Dashboard() {
+  const { profile } = useAuthStore();
   const { activeWorkspace } = useWorkspaceStore();
-  const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [chartData, setChartData] = useState<any[]>([]);
-  
-  // Resumen del mes actual
-  const [currentMonthSales, setCurrentMonthSales] = useState(0);
-  const [currentMonthPurchases, setCurrentMonthPurchases] = useState(0);
 
-  // Lista reciente
-  const [recentMovements, setRecentMovements] = useState<any[]>([]);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [sessionsToday, setSessionsToday] = useState<any[]>([]);
+  const [classesWeekCount, setClassesWeekCount] = useState(0);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    /**
-     * Obtiene los productos (para calcular stock crítico) y 
-     * las transacciones (para calcular ingresos/gastos y poblar el gráfico).
-     */
-    const fetchData = async () => {
-      if (!activeWorkspace) return;
+    if (!activeWorkspace) return;
+
+    const fetchDashboardData = async () => {
       setLoading(true);
-      
-      // 1. Obtener productos
-      const { data: prodData } = await supabase.from('products').select('*').eq('workspace_id', activeWorkspace.id);
-      if (prodData) setProducts(prodData as Product[]);
+      try {
+        // 1. Fetch Students
+        const { data: studentsData, error: studentsError } = await supabase
+          .from('students')
+          .select('*')
+          .eq('workspace_id', activeWorkspace.id)
+          .order('created_at', { ascending: false });
 
-      // 2. Obtener transacciones
-      const { data: txData } = await supabase.from('transactions').select('*, product:products(*)').eq('workspace_id', activeWorkspace.id).order('created_at', { ascending: false });
-      
-      if (txData) {
-        const txs = txData as Transaction[];
+        if (studentsError) throw studentsError;
+        setStudents((studentsData as Student[]) || []);
 
-        // Calcular mes actual
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
+        // 2. Fetch Sessions for Today & Week
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        let mSales = 0;
-        let mPurchases = 0;
+        const nextWeek = new Date(today);
+        nextWeek.setDate(today.getDate() + 7);
 
-        txs.forEach(tx => {
-          const d = new Date(tx.created_at || '');
-          if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
-            if (tx.type === 'sale') mSales += Number(tx.total_price || 0);
-            if (tx.type === 'purchase') mPurchases += Number(tx.total_price || 0);
-          }
-        });
+        const { data: sessionsData, error: sessionsError } = await supabase
+          .from('sessions')
+          .select('*, students(first_name, last_name, plan)')
+          .eq('workspace_id', activeWorkspace.id)
+          .gte('start_time', today.toISOString())
+          .lt('start_time', nextWeek.toISOString())
+          .order('start_time', { ascending: true });
 
-        setCurrentMonthSales(mSales);
-        setCurrentMonthPurchases(mPurchases);
+        if (sessionsError) throw sessionsError;
 
-        // Construir data del gráfico (Agrupado por mes)
-        const monthlyData = new Map<string, { name: string, Ventas: number, Compras: number }>();
-        const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const allSessions = (sessionsData as any[]) || [];
         
-        // Inicializar últimos 6 meses
-        for(let i = 5; i >= 0; i--) {
-          const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-          const key = `${d.getFullYear()}-${d.getMonth()}`;
-          monthlyData.set(key, { name: monthNames[d.getMonth()], Ventas: 0, Compras: 0 });
-        }
+        // Filtrar las de hoy
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
 
-        txs.forEach(tx => {
-          const d = new Date(tx.created_at || '');
-          const key = `${d.getFullYear()}-${d.getMonth()}`;
-          if (monthlyData.has(key)) {
-            const entry = monthlyData.get(key)!;
-            if (tx.type === 'sale') entry.Ventas += Number(tx.total_price || 0);
-            if (tx.type === 'purchase') entry.Compras += Number(tx.total_price || 0);
-          }
+        const todaySessions = allSessions.filter(s => {
+          const sessionDate = new Date(s.start_time);
+          return sessionDate >= today && sessionDate < tomorrow;
         });
 
-        setChartData(Array.from(monthlyData.values()));
+        setSessionsToday(todaySessions);
+        setClassesWeekCount(allSessions.length);
 
-        // Obtener movimientos recientes agrupados (Lotes) filtrados
-        const grouped = new Map<string, any>();
-        txData.forEach((tx: any) => { 
-          if (!['sale', 'purchase', 'creation'].includes(tx.type)) return;
-          
-          const mId = tx.movement_id || tx.id;
-          if (!grouped.has(mId)) {
-            grouped.set(mId, {
-              id: mId,
-              type: tx.type,
-              date: tx.created_at,
-              itemsCount: 0,
-              totalValue: 0
-            });
-          }
-          const group = grouped.get(mId)!;
-          group.itemsCount += 1;
-          if (tx.type === 'sale' || tx.type === 'purchase') {
-            group.totalValue += Number(tx.total_price || 0);
-          }
-        });
-        // Sort by date descending and take top 10
-        const sortedMovements = Array.from(grouped.values()).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        setRecentMovements(sortedMovements.slice(0, 10)); // Mostrar 10 en el dashboard
-      }
+        // 3. Fetch Recent Activity
+        let activities: any[] = [];
       
-      setLoading(false);
+        if (todaySessions.length > 0) {
+          activities.push({
+            id: 's-' + todaySessions[0].id,
+            type: 'session',
+            title: `Clase con ${todaySessions[0].students?.first_name}`,
+            updated_at: todaySessions[0].start_time
+          });
+        }
+  
+        if (studentsData && studentsData.length > 0) {
+          const sortedStudents = [...studentsData].sort((a, b) => 
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+          
+          activities.push({
+            id: 'st-' + sortedStudents[0].id,
+            type: 'student',
+            title: `Nuevo alumno: ${sortedStudents[0].first_name}`,
+            updated_at: sortedStudents[0].created_at
+          });
+        }
+  
+        activities.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+        setRecentActivity(activities.slice(0, 5));
+
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    if (activeWorkspace) {
-      fetchData();
-    }
-  }, [activeWorkspace]);
+    fetchDashboardData();
+  }, [activeWorkspace?.id]);
 
-  const lowStockItems = products.filter(p => p.stock <= p.min_stock);
-  const balance = currentMonthSales - currentMonthPurchases;
+  const activosCount = students.filter(s => s.status === 'Activo').length;
+  const inactivosCount = students.filter(s => s.status === 'Pausa' || s.status === 'Cesado').length;
 
-  if (loading) {
-    return (
-      <div className="flex h-full w-full items-center justify-center p-12 text-muted-foreground animate-pulse gap-2">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-        <p>Calculando métricas del dashboard...</p>
-      </div>
-    );
-  }
+  const formatTime = (isoString: string) => {
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const getTimeAgo = (dateStr: string) => {
+    const diff = Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 60000); // minutos
+    if (diff < 60) return `Hace ${diff} minuto(s)`;
+    const hours = Math.floor(diff / 60);
+    if (hours < 24) return `Hace ${hours} hora(s)`;
+    return `Hace ${Math.floor(hours / 24)} día(s)`;
+  };
+
+  const getChartData = () => {
+    const now = new Date();
+    const currentMonthDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    // Mes Anterior
+    const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    
+    const prevMonthName = prevMonthDate.toLocaleDateString('es-ES', { month: 'short' });
+    const currentMonthName = currentMonthDate.toLocaleDateString('es-ES', { month: 'short' });
+
+    let prevActivos = 0;
+    let prevInactivos = 0;
+
+    students.forEach(s => {
+      const created = new Date(s.created_at);
+      const cese = s.cese_date ? new Date(s.cese_date) : null;
+      
+      // Si estuvo registrado antes del inicio del mes actual (existía el mes pasado)
+      if (created < currentMonthDate) {
+        // Estuvo inactivo/cesado durante el mes anterior?
+        if (cese && cese < currentMonthDate) {
+          prevInactivos++;
+        } else {
+          prevActivos++;
+        }
+      }
+    });
+
+    return [
+      {
+        name: prevMonthName.charAt(0).toUpperCase() + prevMonthName.slice(1),
+        Activos: prevActivos,
+        Inactivos: prevInactivos,
+      },
+      {
+        name: currentMonthName.charAt(0).toUpperCase() + currentMonthName.slice(1),
+        Activos: activosCount,
+        Inactivos: inactivosCount,
+      }
+    ];
+  };
+
+  const chartData = getChartData();
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="absolute inset-0 bg-grid pointer-events-none opacity-[0.03]"></div>
-      <div className="relative z-10">
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Resumen general de tu inventario y movimientos.
-        </p>
-      </div>
-
-      {/* Tarjetas de Métricas */}
-      <div className="relative z-10 grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="group relative overflow-hidden rounded-2xl rounded-tl-[2rem] glass glass-hover p-5 sm:p-6 border-t-2 border-t-cyan-500/20">
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-sky-500/10 transition-transform group-hover:scale-150 blur-2xl"></div>
-          <div className="relative flex items-center justify-between space-y-0 pb-4">
-            <h3 className="tracking-tight text-sm font-medium text-muted-foreground uppercase tracking-widest text-xs">Ingresos Totales</h3>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/10 border border-sky-500/20">
-              <DollarSign className="h-5 w-5 text-sky-600" />
-            </div>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      {/* Header Section Espectacular */}
+      <div className="mb-8 relative rounded-3xl overflow-hidden glass p-8 sm:p-10 border-0 shadow-xl bg-gradient-to-r from-primary/10 via-indigo-500/5 to-purple-500/10">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+        <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-indigo-600 shadow-md shadow-primary/30 flex items-center justify-center text-white shrink-0">
+            <span className="text-4xl font-display font-bold leading-none tracking-tighter uppercase">
+              {activeWorkspace?.name?.charAt(0) || profile?.full_name?.charAt(0) || 'A'}
+            </span>
           </div>
-          <div className="relative text-3xl font-bold text-foreground font-tech">S/ {currentMonthSales.toFixed(2)}</div>
-          <p className="relative mt-1 text-xs text-muted-foreground">Dinero entrante este mes</p>
-        </div>
-
-        <div className="group relative overflow-hidden rounded-2xl glass glass-hover p-5 sm:p-6 border-t-2 border-t-blue-500/20">
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-blue-500/10 transition-transform group-hover:scale-150 blur-2xl"></div>
-          <div className="relative flex items-center justify-between space-y-0 pb-4">
-            <h3 className="tracking-tight text-sm font-medium text-muted-foreground uppercase tracking-widest text-xs">Gastos Totales</h3>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20">
-              <ArrowRightLeft className="h-5 w-5 text-blue-600" />
-            </div>
+          <div className="text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+              Bienvenido a <span className="text-primary font-bold">{activeWorkspace?.name || 'Harmony App'}</span>
+            </h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base max-w-lg font-medium">
+              Hola {profile?.full_name?.split(' ')[0]}, aquí tienes un resumen del estado de tu academia hoy.
+            </p>
           </div>
-          <div className="relative text-3xl font-bold text-foreground font-tech">S/ {currentMonthPurchases.toFixed(2)}</div>
-          <p className="relative mt-1 text-xs text-muted-foreground">Dinero gastado en compras</p>
-        </div>
-
-        <div className="group relative overflow-hidden rounded-2xl glass glass-hover p-5 sm:p-6 border-t-2 border-t-emerald-500/20">
-          <div className={`absolute -right-4 -top-4 h-24 w-24 rounded-full transition-transform group-hover:scale-150 blur-2xl ${balance >= 0 ? 'bg-emerald-500/10' : 'bg-destructive/10'}`}></div>
-          <div className="relative flex items-center justify-between space-y-0 pb-4">
-            <h3 className="tracking-tight text-sm font-medium text-muted-foreground uppercase tracking-widest text-xs">Balance del Mes</h3>
-            <div className={`flex h-10 w-10 items-center justify-center rounded-xl border border-black/5 ${balance >= 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-destructive/10 border-destructive/20'}`}>
-              {balance >= 0 ? <TrendingUp className="h-5 w-5 text-emerald-400" /> : <TrendingDown className="h-5 w-5 text-destructive" />}
-            </div>
-          </div>
-          <div className={`relative text-3xl font-bold font-tech ${balance >= 0 ? 'text-emerald-400' : 'text-destructive'}`}>
-            {balance >= 0 ? '+' : ''}S/ {balance.toFixed(2)}
-          </div>
-          <p className="relative mt-1 text-xs text-muted-foreground">{balance >= 0 ? 'El mes es rentable' : 'Más gastos que ingresos'}</p>
-        </div>
-
-        <div className="group relative overflow-hidden rounded-2xl rounded-br-[2rem] glass glass-hover border-t-2 border-t-amber-500/20 p-5 sm:p-6">
-          <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-amber-500/20 transition-transform group-hover:scale-150 blur-2xl"></div>
-          <div className="relative flex items-center justify-between space-y-0 pb-4">
-            <h3 className="tracking-tight text-sm font-medium text-amber-600 uppercase tracking-widest text-xs">Alertas de Stock</h3>
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20">
-              <AlertTriangle className="h-5 w-5 text-amber-600" />
-            </div>
-          </div>
-          <div className="relative text-3xl font-bold text-amber-600 font-tech">{lowStockItems.length}</div>
-          <p className="relative mt-1 text-xs text-muted-foreground">Productos por debajo del mínimo</p>
         </div>
       </div>
 
-      <div className="relative z-10 grid gap-4 grid-cols-1 lg:grid-cols-5">
+      {/* Metric Cards - Showcasing the Palette */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         
-        {/* Gráfico Comparativo Mensual */}
-        <div className="rounded-2xl rounded-bl-[2rem] glass p-4 sm:p-6 lg:col-span-3 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 blur-3xl rounded-full"></div>
-          <div className="mb-4 relative z-10">
-            <h3 className="font-semibold leading-none tracking-tight">Comparativa de Ventas vs Compras (Últimos 6 meses)</h3>
-            <p className="text-sm text-muted-foreground">Tendencia de ingresos y gastos</p>
+        {/* Card 1 - Primary Blue (Total Alumnos) */}
+        <div className="glass rounded-3xl p-6 relative overflow-hidden group shadow-sm border-l-4 border-l-primary border-y-border/50 border-r-border/50 bg-card hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500 pointer-events-none"></div>
+          <div className="flex items-start gap-4 relative z-10">
+            <div className="p-3 bg-primary/10 rounded-2xl shadow-inner">
+              <UsersRound className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Total Alumnos</p>
+              <h3 className="text-3xl font-display font-black mt-1 text-foreground tracking-tighter">{loading ? '-' : students.length}</h3>
+            </div>
           </div>
-          <div className="h-[300px] w-full relative z-10">
+        </div>
+
+        {/* Card 2 - Success/Green Accent (Activos) */}
+        <div className="glass rounded-3xl p-6 relative overflow-hidden group shadow-sm border-l-4 border-l-green-500 border-y-border/50 border-r-border/50 bg-card hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500 pointer-events-none"></div>
+          <div className="flex items-start gap-4 relative z-10">
+            <div className="p-3 bg-green-500/20 rounded-2xl">
+              <Users className="w-6 h-6 text-green-600 opacity-90" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Activos</p>
+              <h3 className="text-3xl font-display font-black mt-1 text-foreground tracking-tighter">{loading ? '-' : activosCount}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3 - Orange (Inactivos) */}
+        <div className="glass rounded-3xl p-6 relative overflow-hidden group shadow-sm border-l-4 border-l-secondary border-y-border/50 border-r-border/50 bg-card hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500 pointer-events-none"></div>
+          <div className="flex items-start gap-4 relative z-10">
+            <div className="p-3 bg-secondary/10 rounded-2xl">
+              <UserMinus className="w-6 h-6 text-secondary" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Inactivos</p>
+              <h3 className="text-3xl font-display font-black mt-1 text-foreground tracking-tighter">{loading ? '-' : inactivosCount}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 4 - Yellow Accent (Clases Hoy) */}
+        <div className="glass rounded-3xl p-6 relative overflow-hidden group shadow-sm border-l-4 border-l-accent border-y-border/50 border-r-border/50 bg-card hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500 pointer-events-none"></div>
+          <div className="flex items-start gap-4 relative z-10">
+            <div className="p-3 bg-accent/10 rounded-2xl">
+              <Calendar className="w-6 h-6 text-accent" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Clases Hoy</p>
+              <h3 className="text-3xl font-display font-black mt-1 text-foreground tracking-tighter">{loading ? '-' : sessionsToday.length}</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Card 5 - Purple Accent (Clases Semanal) */}
+        <div className="glass rounded-3xl p-6 relative overflow-hidden group shadow-sm border-l-4 border-l-purple-500 border-y-border/50 border-r-border/50 bg-card hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500 pointer-events-none"></div>
+          <div className="flex items-start gap-4 relative z-10">
+            <div className="p-3 bg-purple-500/10 rounded-2xl">
+              <Clock className="w-6 h-6 text-purple-500" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Clases Sem.</p>
+              <h3 className="text-3xl font-display font-black mt-1 text-foreground tracking-tighter">{loading ? '-' : classesWeekCount}</h3>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Main Content Area */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        
+        {/* Comparative Chart */}
+        <div className="glass rounded-3xl p-6 sm:p-8 border border-border/50 h-[460px] flex flex-col shadow-sm relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-700"></div>
+          <h3 className="font-display font-bold text-xl mb-6 flex items-center gap-2 relative z-10">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-primary" />
+            </div>
+            Crecimiento
+          </h3>
+          
+          <div className="flex-1 w-full relative z-10 mt-2">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `S/ ${value}`} style={{ fontFamily: 'Space Grotesk' }} />
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="text-border/40" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'currentColor' }} className="text-muted-foreground font-medium" dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'currentColor' }} className="text-muted-foreground font-medium" />
                 <Tooltip 
-                  cursor={{ fill: 'rgba(0,0,0,0.02)' }}
-                  contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(12px)', borderColor: 'rgba(0,0,0,0.1)', borderRadius: '12px', color: '#0f172a', fontFamily: 'Space Grotesk' }}
+                  cursor={{ fill: 'transparent' }}
+                  contentStyle={{ borderRadius: '1rem', border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--foreground)', fontSize: '12px', padding: '10px 14px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  itemStyle={{ fontWeight: 'bold' }}
                 />
-                <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                <Bar dataKey="Ventas" fill="url(#colorVentas)" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="Compras" fill="url(#colorCompras)" radius={[4, 4, 0, 0]} />
-                <defs>
-                  <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#00f2fe" stopOpacity={1}/>
-                    <stop offset="95%" stopColor="#4facfe" stopOpacity={0.4}/>
-                  </linearGradient>
-                  <linearGradient id="colorCompras" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4facfe" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#00f2fe" stopOpacity={0.2}/>
-                  </linearGradient>
-                </defs>
+                <Bar dataKey="Activos" fill="#22c55e" radius={[6, 6, 0, 0]} maxBarSize={45} />
+                <Bar dataKey="Inactivos" fill="#f97316" radius={[6, 6, 0, 0]} maxBarSize={45} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Panel de Alertas y Balance */}
-        <div className="rounded-2xl glass p-4 sm:p-6 lg:col-span-2 space-y-6 flex flex-col relative overflow-hidden">
-          <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-primary/10 blur-3xl"></div>
-          
-          {/* Calendario de Movimientos Recientes */}
-          <div className="flex-1 relative">
-            <div className="mb-4">
-              <h3 className="font-semibold leading-none tracking-tight flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
-                  <CalendarIcon className="h-4 w-4 text-foreground" />
-                </div>
-                Últimos Movimientos
-              </h3>
+        {/* Agenda Diaria */}
+        <div className="glass rounded-3xl p-6 sm:p-8 h-[460px] flex flex-col border border-border/50 shadow-sm relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none group-hover:bg-primary/10 transition-colors duration-700"></div>
+          <h3 className="font-display font-bold text-xl mb-6 flex items-center gap-2 relative z-10">
+            <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center">
+              <Calendar className="w-4 h-4 text-secondary" />
             </div>
-            <div className="space-y-4">
-              {recentMovements.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-6">No hay movimientos recientes.</p>
-              ) : (
-                recentMovements.map((mov) => (
-                  <div key={mov.id} className="group flex items-center justify-between rounded-xl p-3 hover:bg-muted/50 transition-colors border border-transparent hover:border-border">
-                    <div className="flex items-center gap-3">
-                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${mov.type === 'sale' ? 'bg-primary/10 text-primary' : mov.type === 'purchase' ? 'bg-secondary/20 text-secondary-foreground' : 'bg-blue-500/10 text-blue-600'}`}>
-                        {mov.type === 'sale' ? <TrendingUp className="h-4 w-4" /> : mov.type === 'purchase' ? <TrendingDown className="h-4 w-4" /> : <CalendarIcon className="h-4 w-4" />}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold capitalize">
-                          {mov.type === 'sale' ? 'Venta' : mov.type === 'purchase' ? 'Compra Masiva' : 'Ingreso Nuevo'}
-                        </span>
-                        <span className="text-xs text-muted-foreground font-medium">
-                          {new Date(mov.date).toLocaleDateString('es-PE', { day: '2-digit', month: 'short' })} - {mov.itemsCount} item(s)
-                        </span>
-                      </div>
-                    </div>
-                    {(mov.type === 'sale' || mov.type === 'purchase') && (
-                      <span className={`text-sm font-bold font-tech ${mov.type === 'sale' ? 'text-sky-600' : 'text-foreground'}`}>
-                        {mov.type === 'sale' ? '+' : '-'} S/ {mov.totalValue.toFixed(2)}
+            Agenda Diaria <span className="text-muted-foreground font-medium text-base ml-2">({new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })})</span>
+          </h3>
+          
+          <div className="flex-1 overflow-y-auto pr-2 space-y-4 relative z-10 custom-scrollbar">
+            {loading ? (
+              <div className="text-center flex h-full items-center justify-center text-muted-foreground">
+                <div className="animate-pulse flex flex-col items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-muted"></div>
+                  <div className="w-32 h-4 rounded bg-muted"></div>
+                </div>
+              </div>
+            ) : sessionsToday.length === 0 ? (
+              <div className="text-center flex flex-col items-center justify-center h-full text-muted-foreground space-y-4">
+                <div className="w-20 h-20 bg-secondary/5 rounded-full flex items-center justify-center shadow-[0_0_40px_-10px_var(--color-secondary)] border border-secondary/20">
+                  <Calendar className="w-8 h-8 text-secondary/60" />
+                </div>
+                <p className="font-medium text-muted-foreground">No hay clases programadas para hoy.</p>
+              </div>
+            ) : (
+              sessionsToday.map((session, i) => (
+                <div key={session.id || i} className="flex items-center gap-5 p-4 rounded-2xl bg-card border border-border/40 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-primary/20 transition-all group/item cursor-default">
+                  <div className="px-4 py-3 bg-gradient-to-b from-primary/10 to-primary/5 text-primary border border-primary/10 rounded-xl text-sm font-black min-w-[90px] text-center shadow-sm group-hover/item:shadow-primary/20 transition-all">
+                    {formatTime(session.start_time)}
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold font-display text-lg text-foreground capitalize">
+                      {session.students?.first_name} {session.students?.last_name}
+                    </h4>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-muted/80 text-muted-foreground rounded-md">
+                        {session.students?.plan}
                       </span>
-                    )}
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-1 bg-primary/5 text-primary rounded-md">
+                        {session.status}
+                      </span>
+                    </div>
                   </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="border-t pt-6">
-            <div className="mb-4">
-              <h3 className="font-semibold leading-none tracking-tight">Stock Crítico</h3>
-            </div>
-            <div className="space-y-3 max-h-[250px] overflow-y-auto pr-2">
-              {lowStockItems.length === 0 ? (
-                <div className="text-center text-xs text-muted-foreground py-4">
-                  Inventario en niveles óptimos.
                 </div>
-              ) : (
-                lowStockItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between rounded-xl border border-black/5 p-3 bg-black/[0.02]">
-                    <div className="flex flex-col truncate pr-2">
-                      <span className="text-sm font-medium truncate">{item.name}</span>
-                    </div>
-                    <div className="flex h-7 px-2 min-w-7 shrink-0 items-center justify-center rounded bg-amber-500/20 text-amber-600 text-xs font-bold border border-amber-500/20 font-tech">
-                      {item.stock}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+              ))
+            )}
           </div>
-          
+        </div>
+        
+        <div className="glass rounded-3xl p-6 sm:p-8 border border-border/50 h-[460px] flex flex-col shadow-sm">
+          <h3 className="font-display font-bold text-xl mb-6 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+              <Activity className="w-4 h-4 text-accent" />
+            </div>
+            Actividad Reciente
+          </h3>
+          <div className="flex-1 overflow-y-auto pr-2 space-y-4 custom-scrollbar">
+            {loading ? (
+              <div className="text-sm text-muted-foreground text-center py-4">Cargando...</div>
+            ) : recentActivity.length === 0 ? (
+              <div className="text-center flex flex-col items-center justify-center h-full text-muted-foreground space-y-4 min-h-[200px]">
+                <div className="w-20 h-20 bg-accent/5 rounded-full flex items-center justify-center shadow-[0_0_40px_-10px_var(--color-accent)] border border-accent/20">
+                  <Activity className="w-8 h-8 text-accent/60" />
+                </div>
+                <p className="font-medium text-muted-foreground">No hay actividad reciente.</p>
+              </div>
+            ) : (
+              recentActivity.map((activity) => (
+                <div key={activity.id} className="flex items-start gap-4 pb-5 border-b border-border/40 last:border-0 last:pb-0 group/act">
+                  <div className={`mt-1 w-2.5 h-2.5 rounded-full shrink-0 shadow-sm transition-transform group-hover/act:scale-125 ${activity.type === 'student' ? 'bg-primary shadow-primary/30' : 'bg-secondary shadow-secondary/30'}`} />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-foreground leading-snug">{activity.title}</p>
+                    <p className="text-[11px] font-medium text-muted-foreground mt-1 uppercase tracking-wider">{getTimeAgo(activity.updated_at)}</p>
+                  </div>
+                  {activity.type === 'student' ? (
+                    <UserPlus className="w-4 h-4 text-muted-foreground/30 mt-1" />
+                  ) : (
+                    <Calendar className="w-4 h-4 text-muted-foreground/30 mt-1" />
+                  )}
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
+
     </div>
   );
-};
+}
