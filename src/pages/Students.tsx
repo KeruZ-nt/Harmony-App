@@ -73,10 +73,10 @@ export default function Students() {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-gradient-to-br from-primary to-primary/90 hover:to-indigo-600 text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:shadow-primary/40"
+            className="flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary/90 hover:to-indigo-600 text-white px-4 sm:px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:shadow-primary/40"
           >
-            <Plus className="w-4 h-4" />
-            Nuevo Alumno
+            <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Nuevo Alumno</span>
           </button>
         </div>
       </div>

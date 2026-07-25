@@ -1,0 +1,1 @@
+UPDATE sessions SET type = 'Regular' WHERE type = 'Cambio de Horario';

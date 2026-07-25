@@ -250,8 +250,9 @@ export default function Schedule() {
             <button onClick={prevWeek} className="p-2 hover:bg-muted/80 rounded-xl transition-colors">
               <ChevronLeft className="w-5 h-5 text-muted-foreground" />
             </button>
-            <button onClick={goToday} className="px-5 py-2 text-sm font-bold text-foreground hover:bg-muted/80 rounded-xl transition-colors">
-              Hoy
+            <button onClick={goToday} className="px-3 sm:px-5 py-2 text-sm font-bold text-foreground hover:bg-muted/80 rounded-xl transition-colors flex items-center justify-center">
+              <span className="hidden sm:inline">Hoy</span>
+              <Calendar className="w-5 h-5 sm:hidden" />
             </button>
             <button onClick={nextWeek} className="p-2 hover:bg-muted/80 rounded-xl transition-colors">
               <ChevronRight className="w-5 h-5 text-muted-foreground" />
@@ -275,16 +276,16 @@ export default function Schedule() {
           </div>
           <button
             onClick={() => setShowHolidayModal(true)}
-            className="flex items-center gap-2 px-5 py-3 bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 text-amber-700 hover:to-amber-500/10 rounded-2xl text-sm font-bold transition-all shadow-sm hover:shadow-md"
+            className="flex items-center justify-center gap-2 px-3 sm:px-5 py-3 bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 text-amber-700 hover:to-amber-500/10 rounded-2xl text-sm font-bold transition-all shadow-sm hover:shadow-md shrink-0"
           >
-            <CalendarOff className="w-4 h-4" />
-            Bloquear Día
+            <CalendarOff className="w-5 h-5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Bloquear Día</span>
           </button>
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="flex-1 glass border border-border/50 rounded-3xl shadow-md overflow-hidden flex flex-col relative group/cal">
+      {/* Desktop Grid */}
+      <div className="hidden lg:flex flex-1 glass border border-border/50 rounded-3xl shadow-md overflow-hidden flex-col relative group/cal">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
         {/* Header Row */}
         <div className="grid grid-cols-[80px_repeat(7,1fr)] border-b border-border/50 bg-foreground/[0.02] relative z-10 backdrop-blur-md">
@@ -426,6 +427,98 @@ export default function Schedule() {
             })}
           </div>
         </div>
+      </div>
+
+      {/* Mobile Agenda View */}
+      <div className="flex flex-col lg:hidden space-y-4 pb-10">
+        {weekDays.map((date, i) => {
+          const isToday = date.toDateString() === new Date().toDateString();
+          const dayName = date.toLocaleDateString('es-ES', { weekday: 'long' });
+          const dateStr = date.toISOString().split('T')[0];
+          const blockedDay = blockedDays.find(b => b.date === dateStr);
+          const isBlocked = !!blockedDay;
+
+          const daySessions = filteredSessions.filter(s => {
+            const sDate = new Date(s.start_time);
+            return sDate.getDate() === date.getDate() && sDate.getMonth() === date.getMonth() && sDate.getFullYear() === date.getFullYear();
+          });
+          
+          daySessions.sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
+
+          if (!isBlocked && daySessions.length === 0 && !isToday) return null;
+
+          return (
+            <div key={i} className={`glass rounded-3xl overflow-hidden border border-border/50 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
+              <div className={`px-5 py-3 border-b border-border/50 flex items-center justify-between ${isToday ? 'bg-primary/5' : 'bg-muted/30'}`}>
+                <div className="flex items-center gap-3">
+                  <span className={`text-2xl font-black tracking-tighter ${isToday ? 'text-primary' : 'text-foreground'}`}>{date.getDate()}</span>
+                  <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground">{dayName}</span>
+                </div>
+                {isToday && <span className="text-[10px] uppercase font-bold bg-primary/20 text-primary px-2 py-1 rounded">Hoy</span>}
+              </div>
+              
+              <div className="p-4 space-y-3">
+                {isBlocked ? (
+                  <div className="bg-amber-500/10 border border-amber-500/20 text-amber-700 p-4 rounded-xl flex items-center gap-3">
+                    <CalendarOff className="w-5 h-5 shrink-0" />
+                    <div>
+                      <p className="font-bold text-sm">Día Bloqueado</p>
+                      <p className="text-xs">{blockedDay.reason}</p>
+                    </div>
+                  </div>
+                ) : daySessions.length === 0 ? (
+                  <div className="text-sm text-muted-foreground italic px-2">Sin clases programadas</div>
+                ) : (
+                  daySessions.map(session => {
+                    const sessionDate = new Date(session.start_time);
+                    return (
+                      <div 
+                        key={session.id}
+                        onClick={() => setEditingSession(session)}
+                        className={`p-4 rounded-xl border flex flex-col gap-2 relative ${
+                          session.type === 'Reprogramación' && session.status === 'Completada' ? 'bg-cyan-500 text-white border-cyan-500 shadow-md shadow-cyan-500/20' :
+                          session.type === 'Reprogramación' ? 'bg-cyan-500/10 text-cyan-900 border-cyan-500/30' :
+                          session.type === 'Cambio de Horario' && session.status === 'Completada' ? 'bg-purple-500 text-white border-purple-500 shadow-md shadow-purple-500/20' :
+                          session.type === 'Cambio de Horario' ? 'bg-purple-500/10 text-purple-900 border-purple-500/30' :
+                          session.status === 'Completada' ? 'bg-primary text-white border-primary shadow-md shadow-primary/20' :
+                          session.status === 'Feriado' ? 'bg-amber-500/10 text-amber-900 border-amber-500/20' : 
+                          session.status === 'Asistió' ? 'bg-green-500/10 text-green-900 border-green-500/20' : 
+                          session.status === 'Falta' ? 'bg-red-500/10 text-red-900 border-red-500/20' : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 text-primary'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <p className="font-bold text-base leading-tight">
+                            {session.students?.first_name} {session.students?.last_name}
+                          </p>
+                          <span className={`text-[11px] font-bold px-2 py-1 rounded-md shrink-0 ${
+                            session.status === 'Completada' ? 'bg-black/10 text-white/90' : 'bg-card/60 text-muted-foreground'
+                          }`}>
+                            {sessionDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                           <span className={`text-[10px] font-bold px-2 py-1 rounded-md ${
+                              session.type === 'Reprogramación' && session.status === 'Completada' ? 'bg-white/20 text-white' :
+                              session.type === 'Reprogramación' ? 'bg-cyan-500/20 text-cyan-700' :
+                              session.type === 'Cambio de Horario' && session.status === 'Completada' ? 'bg-white/20 text-white' :
+                              session.type === 'Cambio de Horario' ? 'bg-purple-500/20 text-purple-700' :
+                              session.status === 'Completada' ? 'bg-white/20 text-white' :
+                              session.status === 'Programada' ? 'bg-primary/20 text-primary' :
+                              session.status === 'Asistió' ? 'bg-green-500/20 text-green-700' :
+                              session.status === 'Feriado' ? 'bg-amber-500/20 text-amber-700' :
+                              'bg-muted/80 text-foreground'
+                            }`}>
+                              {session.type && session.type !== 'Regular' ? session.type : session.status}
+                            </span>
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       {/* Edit Mini-Modal */}

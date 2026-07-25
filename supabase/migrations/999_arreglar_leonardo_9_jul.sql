@@ -1,0 +1,1 @@
+UPDATE sessions SET type = 'Regular', status = 'Completada' WHERE (start_time AT TIME ZONE 'America/Lima')::date = '2026-07-09' AND student_id IN (SELECT id FROM students WHERE first_name ILIKE '%Leonardo%');

@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useWorkspaceStore } from '../store/workspaceStore';
 import { useToastStore } from '../store/toastStore';
 import { Select } from '../components/ui/Select';
-import { Settings as SettingsIcon, Users, Mail, Plus, Trash2, Camera } from 'lucide-react';
+import { Settings as SettingsIcon, Users, Mail, Plus, Trash2, Camera, Save } from 'lucide-react';
 import type { UserRole } from '../types';
 
 interface Colleague {
@@ -238,9 +238,10 @@ export default function Settings() {
                 <button
                   type="submit"
                   disabled={savingName || !workspaceName.trim()}
-                  className="bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold hover:bg-primary/90 transition-all disabled:opacity-50 self-start"
+                  className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all disabled:opacity-50 self-start"
                 >
-                  {savingName ? 'Guardando...' : 'Guardar Cambios'}
+                  <Save className="w-5 h-5 sm:hidden" />
+                  <span className="hidden sm:inline">{savingName ? 'Guardando...' : 'Guardar Cambios'}</span>
                 </button>
               </form>
             </div>
@@ -289,7 +290,14 @@ export default function Settings() {
                   disabled={inviting || !inviteEmail.trim()}
                   className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl font-semibold hover:bg-primary/90 transition-all disabled:opacity-50"
                 >
-                  <Plus className="w-5 h-5" /> {inviting ? 'Invitando...' : 'Crear Invitación'}
+                  {inviting ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Mail className="w-5 h-5 sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Crear Invitación</span>
+                    </>
+                  )}
                 </button>
               </form>
               <p className="text-xs text-muted-foreground mt-4">
