@@ -27,11 +27,37 @@ interface NotificationState {
   markAsRead: () => void;
 }
 
+export const playNotificationSound = () => {
+  try {
+    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    const audioCtx = new AudioContext();
+    
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.type = 'triangle';
+    oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
+    
+    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.8);
+  } catch (e) {
+    console.error('Audio play error', e);
+  }
+};
+
 let realtimeSubscription: any = null;
 
 export const useNotificationStore = create<NotificationState>((set) => ({
   notifications: [],
   unreadCount: 0,
+  initialFetchDone: false,
 
   fetchNotifications: async (workspaceId: string) => {
     try {
@@ -83,9 +109,14 @@ export const useNotificationStore = create<NotificationState>((set) => ({
         const currentExpIds = state.notifications.filter(n => n.type === 'expiration').map(n => n.id);
         const newExpNotifs = expiring.filter(n => !currentExpIds.includes(n.id));
         
+        if (state.initialFetchDone && newExpNotifs.length > 0) {
+          playNotificationSound();
+        }
+        
         return { 
           notifications: allNotifs,
-          unreadCount: state.unreadCount + newExpNotifs.length
+          unreadCount: state.unreadCount + (state.initialFetchDone ? newExpNotifs.length : 0),
+          initialFetchDone: true
         };
       });
     } catch (error) {
@@ -116,28 +147,8 @@ export const useNotificationStore = create<NotificationState>((set) => ({
               unreadCount: state.unreadCount + 1
             }));
             
-            // Reproducir sonido sutil de notificación
-            try {
-              const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-              const audioCtx = new AudioContext();
-              const oscillator = audioCtx.createOscillator();
-              const gainNode = audioCtx.createGain();
-              
-              oscillator.type = 'sine';
-              oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
-              oscillator.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.1); // Drop to A4
-              
-              gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-              gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3); // Fade out quickly
-              
-              oscillator.connect(gainNode);
-              gainNode.connect(audioCtx.destination);
-              
-              oscillator.start();
-              oscillator.stop(audioCtx.currentTime + 0.3);
-            } catch (e) {
-              console.error('No se pudo reproducir el sonido de notificación', e);
-            }
+            // Reproducir sonido de notificación
+            playNotificationSound();
           }
         }
       )
