@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Mail, Lock, User, Building, ArrowRight, Loader2, CheckCircle2, XCircle, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Building, ArrowRight, Loader2, CheckCircle2, XCircle, Eye, EyeOff, CalendarCheck, CreditCard, UsersRound, Music } from 'lucide-react';
 import { useToastStore } from '../../store/toastStore';
 import { useAuthStore } from '../../store/authStore';
 
@@ -166,11 +166,24 @@ export function Login() {
           <h1 className="text-4xl xl:text-5xl font-black mb-6 leading-tight text-slate-900">
             La manera más inteligente de gestionar tu academia.
           </h1>
-          <p className="text-slate-500 text-lg xl:text-xl max-w-md font-medium">
-            Control de asistencia, pagos, alumnos y profesores en un solo lugar. 
-            Desarrollado para la excelencia musical.
-          </p>
-        </div>
+          <div className="grid grid-cols-2 gap-4 mt-8">
+            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
+              <CalendarCheck className="w-6 h-6 text-[#0082cc]" />
+              <span className="font-bold text-slate-800 text-sm">Control de Asistencia</span>
+            </div>
+            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
+              <CreditCard className="w-6 h-6 text-emerald-500" />
+              <span className="font-bold text-slate-800 text-sm">Gestión de Pagos</span>
+            </div>
+            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
+              <UsersRound className="w-6 h-6 text-[#e86d11]" />
+              <span className="font-bold text-slate-800 text-sm">Alumnos y Profesores</span>
+            </div>
+            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
+              <Music className="w-6 h-6 text-purple-500" />
+              <span className="font-bold text-slate-800 text-sm">Excelencia Musical</span>
+            </div>
+          </div>
 
 
       </div>
