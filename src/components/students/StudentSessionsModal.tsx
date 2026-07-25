@@ -18,7 +18,11 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
   const { sessions, loading, fetchSessionsByStudent, updateSession, deleteSession, addSession, shiftSessionsForward, bulkShiftSchedule } = useSessionStore();
   const { addToast } = useToastStore();
   const [addingSession, setAddingSession] = useState(false);
-  const [editingRowId, setEditingRowId] = useState<string | null>(null);
+  const [editingSessionData, setEditingSessionData] = useState<{
+    id: string;
+    start_time: string;
+    end_time: string;
+  } | null>(null);
   const [hasPromptedRenewal, setHasPromptedRenewal] = useState(false);
   
   const [shiftPrompt, setShiftPrompt] = useState<{
@@ -148,41 +152,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
     });
   };
 
-  const handleDateChange = async (sessionId: string, currentStart: string, currentEnd: string, newDateStr: string) => {
-    if (!newDateStr) return;
-    const start = new Date(currentStart);
-    const end = new Date(currentEnd);
-    
-    const [year, month, day] = newDateStr.split('-').map(Number);
-    start.setFullYear(year, month - 1, day);
-    end.setFullYear(year, month - 1, day);
-
-    setShiftPrompt({
-      sessionId,
-      currentStart,
-      currentEnd,
-      newStartIso: start.toISOString(),
-      newEndIso: end.toISOString()
-    });
-  };
-
-  const handleTimeChange = async (sessionId: string, currentStart: string, currentEnd: string, newTimeStr: string) => {
-    if (!newTimeStr) return;
-    const start = new Date(currentStart);
-    const end = new Date(currentEnd);
-    
-    const [hours, minutes] = newTimeStr.split(':').map(Number);
-    start.setHours(hours, minutes);
-    end.setHours(hours + 1, minutes);
-
-    setShiftPrompt({
-      sessionId,
-      currentStart,
-      currentEnd,
-      newStartIso: start.toISOString(),
-      newEndIso: end.toISOString()
-    });
-  };
+  // These are handled locally now, so we don't need handleDateChange/handleTimeChange anymore
 
   const confirmShift = async (type: 'Reprogramación' | 'Cambio de Horario') => {
     if (!shiftPrompt) return;
@@ -194,12 +164,49 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
           type: 'Reprogramación'
         });
       } else {
+        // Shift using Zustand state to avoid Supabase timezone/DST quirks
+        const targetTime = new Date(shiftPrompt.currentStart).getTime();
+        const targetDay = new Date(shiftPrompt.currentStart).getDay();
+        const targetHours = new Date(shiftPrompt.currentStart).getHours();
+        const targetMins = new Date(shiftPrompt.currentStart).getMinutes();
+
+        const sessionsToShift = sessions.filter(
+          s => s.id !== shiftPrompt.sessionId && 
+               new Date(s.start_time).getTime() > targetTime && 
+               new Date(s.start_time).getDay() === targetDay &&
+               new Date(s.start_time).getHours() === targetHours &&
+               new Date(s.start_time).getMinutes() === targetMins
+        );
+
+        const newDate = new Date(shiftPrompt.newStartIso);
+        const origDate = new Date(shiftPrompt.currentStart);
+        const dayDiff = Math.round((newDate.getTime() - origDate.getTime()) / (1000 * 3600 * 24));
+        const newHours = newDate.getHours();
+        const newMins = newDate.getMinutes();
+
+        const updatePromises = sessionsToShift.map(s => {
+          const nextStart = new Date(s.start_time);
+          nextStart.setDate(nextStart.getDate() + dayDiff);
+          nextStart.setHours(newHours, newMins, 0, 0);
+          
+          const nextEnd = new Date(s.end_time);
+          nextEnd.setDate(nextEnd.getDate() + dayDiff);
+          nextEnd.setHours(newHours + 1, newMins, 0, 0);
+
+          return updateSession(s.id, {
+            start_time: nextStart.toISOString(),
+            end_time: nextEnd.toISOString(),
+            type: 'Cambio de Horario'
+          });
+        });
+
         await updateSession(shiftPrompt.sessionId, { 
           start_time: shiftPrompt.newStartIso,
           end_time: shiftPrompt.newEndIso,
           type: 'Cambio de Horario'
         });
-        await bulkShiftSchedule(student.id, shiftPrompt.currentStart, shiftPrompt.newStartIso, shiftPrompt.newEndIso);
+        
+        await Promise.all(updatePromises);
       }
       addToast({ message: 'Clase actualizada', type: 'success' });
       await fetchSessionsByStudent(student.id);
@@ -345,22 +352,32 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                             {index + 1}
                           </td>
                           <td className="px-2 py-2">
-                            {editingRowId === session.id ? (
+                            {editingSessionData?.id === session.id ? (
                               <div className="flex flex-col gap-1">
                                 <DatePicker
-                                  value={session.start_time.split('T')[0]}
+                                  value={editingSessionData.start_time.split('T')[0]}
                                   onChange={(newDateStr) => {
-                                    if (newDateStr !== session.start_time.split('T')[0]) {
-                                      handleDateChange(session.id, session.start_time, session.end_time, newDateStr);
+                                    if (newDateStr) {
+                                      const start = new Date(editingSessionData.start_time);
+                                      const end = new Date(editingSessionData.end_time);
+                                      const [year, month, day] = newDateStr.split('-').map(Number);
+                                      start.setFullYear(year, month - 1, day);
+                                      end.setFullYear(year, month - 1, day);
+                                      setEditingSessionData({ ...editingSessionData, start_time: start.toISOString(), end_time: end.toISOString() });
                                     }
                                   }}
                                   placeholder="Fecha"
                                 />
                                 <Select
-                                  value={new Date(session.start_time).toTimeString().slice(0,5)}
+                                  value={new Date(editingSessionData.start_time).toTimeString().slice(0,5)}
                                   onChange={(newTimeStr) => {
-                                    if (newTimeStr !== new Date(session.start_time).toTimeString().slice(0,5)) {
-                                      handleTimeChange(session.id, session.start_time, session.end_time, newTimeStr);
+                                    if (newTimeStr) {
+                                      const start = new Date(editingSessionData.start_time);
+                                      const end = new Date(editingSessionData.end_time);
+                                      const [hours, minutes] = newTimeStr.split(':').map(Number);
+                                      start.setHours(hours, minutes);
+                                      end.setHours(hours + 1, minutes);
+                                      setEditingSessionData({ ...editingSessionData, start_time: start.toISOString(), end_time: end.toISOString() });
                                     }
                                   }}
                                   options={TIME_OPTIONS}
@@ -402,10 +419,21 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                           </td>
                           <td className="px-2 py-2 text-center">
                             <div className="flex items-center justify-center gap-0.5">
-                              {editingRowId === session.id ? (
+                              {editingSessionData?.id === session.id ? (
                                 <>
                                   <button
-                                    onClick={() => setEditingRowId(null)}
+                                    onClick={() => {
+                                      if (editingSessionData.start_time !== session.start_time) {
+                                        setShiftPrompt({
+                                          sessionId: session.id,
+                                          currentStart: session.start_time,
+                                          currentEnd: session.end_time,
+                                          newStartIso: editingSessionData.start_time,
+                                          newEndIso: editingSessionData.end_time
+                                        });
+                                      }
+                                      setEditingSessionData(null);
+                                    }}
                                     className="p-1 text-green-500 hover:bg-green-50 rounded-lg transition-colors"
                                     title="Finalizar edición"
                                   >
@@ -428,7 +456,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                                 </>
                               ) : (
                                 <button
-                                  onClick={() => setEditingRowId(session.id)}
+                                  onClick={() => setEditingSessionData({ id: session.id, start_time: session.start_time, end_time: session.end_time })}
                                   className="p-1 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                   title="Editar fecha y hora"
                                 >
