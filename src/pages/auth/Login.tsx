@@ -138,77 +138,76 @@ export function Login() {
     }
   };
 
-  const inputClasses = "w-full bg-white/5 border border-white/10 text-white text-sm rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white/10 block pl-11 p-3.5 transition-all outline-none placeholder:text-slate-500";
-  const iconClasses = "absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400";
-  const labelClasses = "block text-sm font-medium text-slate-300 mb-1.5 ml-1";
+  const inputClasses = "w-full bg-white border border-border text-foreground text-sm rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-11 p-3.5 transition-all outline-none placeholder:text-muted-foreground/60 shadow-sm";
+  const iconClasses = "absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/70";
+  const labelClasses = "block text-sm font-medium text-foreground mb-1.5 ml-1";
 
   return (
-    <div className="min-h-screen flex w-full bg-slate-950 relative overflow-hidden text-slate-200">
+    <div className="min-h-screen flex w-full bg-[#f8f9fa] relative overflow-hidden text-foreground">
       
-      {/* Universal Background gradients */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950"></div>
-        <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[70%] bg-purple-900/20 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-cyan-900/10 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="absolute inset-0 bg-grid-white/[0.02]"></div>
+      {/* Soft Background Elements for visual interest (very subtle) */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[70%] bg-blue-100/40 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-[-20%] left-[-10%] w-[40%] h-[60%] bg-purple-100/40 rounded-full blur-[100px]"></div>
+        <div className="absolute inset-0 bg-grid-slate-900/[0.015]"></div>
       </div>
 
       {/* Left Panel - Information (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative flex-col justify-between p-12 overflow-hidden bg-slate-950/50 backdrop-blur-sm border-r border-white/5 text-white z-10">
+      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative flex-col justify-between p-12 bg-white/40 backdrop-blur-3xl border-r border-border/40 z-10">
         
         <div className="z-10 relative">
-          <div className="flex items-center gap-3 font-display text-2xl font-bold mb-16">
+          <div className="flex items-center gap-3 font-display text-2xl font-bold mb-16 text-foreground">
             <div className="bg-gradient-to-br from-[#0082cc] to-[#e86d11] p-2.5 rounded-xl shadow-lg flex items-center justify-center">
               <img src="/logo.png" alt="Logo" className="w-6 h-6 object-cover mix-blend-screen" />
             </div>
             Harmony App
           </div>
           
-          <h1 className="text-4xl xl:text-5xl font-black mb-6 leading-tight">
+          <h1 className="text-4xl xl:text-5xl font-black mb-6 leading-tight text-slate-900">
             La manera más inteligente de gestionar tu academia.
           </h1>
-          <p className="text-slate-400 text-lg xl:text-xl max-w-md">
+          <p className="text-slate-500 text-lg xl:text-xl max-w-md font-medium">
             Control de asistencia, pagos, alumnos y profesores en un solo lugar. 
             Desarrollado para la excelencia musical.
           </p>
         </div>
 
-        <div className="z-10 relative mt-auto border border-white/10 bg-white/5 backdrop-blur-md p-6 rounded-3xl max-w-md shadow-2xl">
+        <div className="z-10 relative mt-auto border border-border/50 bg-white/80 backdrop-blur-md p-6 rounded-3xl max-w-md shadow-sm">
           <div className="flex items-center gap-4 mb-4">
             <div className="flex -space-x-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className={`w-10 h-10 rounded-full border-2 border-slate-900 bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold shadow-lg`}>
+                <div key={i} className={`w-10 h-10 rounded-full border-2 border-white bg-gradient-to-br from-[#0082cc] to-[#e86d11] flex items-center justify-center text-xs font-bold shadow-md text-white`}>
                   M{i}
                 </div>
               ))}
             </div>
             <div className="text-sm">
-              <p className="font-bold text-white">Únete a cientos de directores</p>
-              <p className="text-slate-400">que ya modernizaron su gestión</p>
+              <p className="font-bold text-slate-900">Únete a cientos de directores</p>
+              <p className="text-slate-500 font-medium">que ya modernizaron su gestión</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right Panel - Auth Forms */}
-      <div className="w-full lg:w-7/12 xl:w-1/2 flex items-center justify-center p-4 sm:p-8 relative z-10">
-        <div className="w-full max-w-[440px] relative">
-          <div className="bg-white/5 backdrop-blur-xl rounded-[2rem] p-6 sm:p-10 shadow-2xl border border-white/10 relative overflow-hidden">
+      <div className="w-full lg:w-7/12 xl:w-1/2 flex items-center justify-center p-4 sm:p-8 md:p-12 relative z-10 overflow-y-auto">
+        <div className="w-full max-w-[420px] relative my-auto">
+          
+          {/* Main Card */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] p-6 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative overflow-hidden">
             
-            {/* Subtle glow inside the card */}
-            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-            
-            <div className="flex justify-center mb-6 lg:hidden">
+            {/* Mobile Logo */}
+            <div className="flex justify-center mb-8 lg:hidden">
               <div className="bg-gradient-to-br from-[#0082cc] to-[#e86d11] p-3 rounded-2xl shadow-lg shadow-[#0082cc]/30 flex items-center justify-center overflow-hidden">
                 <img src="/logo.png" alt="Logo" className="w-8 h-8 object-cover mix-blend-screen" />
               </div>
             </div>
             
             <div className="text-center mb-8 relative z-10">
-              <h2 className="text-3xl font-bold tracking-tight text-white mb-2 font-display">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-2 font-display">
                 {isLogin ? 'Bienvenido de nuevo' : 'Crear Cuenta'}
               </h2>
-              <p className="text-slate-400 text-sm h-5">
+              <p className="text-slate-500 text-sm sm:text-base font-medium h-5">
                 {isLogin 
                   ? 'Inicia sesión en tu cuenta de Harmony' 
                   : hasInvitation 
@@ -218,18 +217,18 @@ export function Login() {
             </div>
 
             {/* Toggle Switch */}
-            <div className="flex p-1 bg-black/20 rounded-xl mb-8 border border-white/5 relative z-10">
+            <div className="flex p-1 bg-slate-100/80 rounded-xl mb-8 border border-border/50 relative z-10">
               <button 
                 type="button"
                 onClick={() => setIsLogin(true)}
-                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all duration-300 ${isLogin ? 'bg-white/10 shadow-lg text-white border border-white/10' : 'text-slate-400 hover:text-white'}`}
+                className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all duration-300 ${isLogin ? 'bg-white shadow-sm text-slate-900 border border-border/30' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 Ingresar
               </button>
               <button 
                 type="button"
                 onClick={() => setIsLogin(false)}
-                className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all duration-300 ${!isLogin ? 'bg-white/10 shadow-lg text-white border border-white/10' : 'text-slate-400 hover:text-white'}`}
+                className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all duration-300 ${!isLogin ? 'bg-white shadow-sm text-slate-900 border border-border/30' : 'text-slate-500 hover:text-slate-900'}`}
               >
                 Registrarse
               </button>
@@ -239,7 +238,7 @@ export function Login() {
               {/* LOGIN FORM */}
               {isLogin && (
                 <div className="animate-in fade-in zoom-in-95 duration-300">
-                  <form onSubmit={handleLogin} className="space-y-4">
+                  <form onSubmit={handleLogin} className="space-y-5">
                     <div>
                       <label className={labelClasses}>Correo Electrónico</label>
                       <div className="relative">
@@ -270,7 +269,7 @@ export function Login() {
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                         >
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
@@ -280,7 +279,7 @@ export function Login() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-[0_0_20px_rgba(79,70,229,0.3)] disabled:opacity-70 disabled:cursor-not-allowed mt-8 border border-indigo-400/20"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-[#0082cc] hover:from-primary/90 hover:to-[#0082cc]/90 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed mt-8 border border-primary/10"
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -298,7 +297,7 @@ export function Login() {
               {/* REGISTER FORM */}
               {!isLogin && (
                 <div className="animate-in fade-in zoom-in-95 duration-300">
-                  <form onSubmit={handleRegister} className="space-y-4">
+                  <form onSubmit={handleRegister} className="space-y-5">
                     <div>
                       <label className={labelClasses}>Correo Electrónico</label>
                       <div className="relative">
@@ -314,7 +313,7 @@ export function Login() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label className={labelClasses}>Tu Nombre</label>
                         <div className="relative">
@@ -329,7 +328,7 @@ export function Login() {
                             readOnly={isNameLocked}
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
-                            className={`${inputClasses} ${isNameLocked ? 'opacity-70 bg-black/20 cursor-not-allowed' : ''}`}
+                            className={`${inputClasses} ${isNameLocked ? 'opacity-80 bg-slate-50 cursor-not-allowed text-slate-500' : ''}`}
                             placeholder="Juan Pérez"
                           />
                         </div>
@@ -368,29 +367,29 @@ export function Login() {
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                         >
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
                       
                       {/* Validation Indicators */}
-                      <div className="bg-black/20 border border-white/5 rounded-xl p-3 grid grid-cols-2 gap-2 mt-2">
+                      <div className="bg-slate-50 border border-border/40 rounded-xl p-3 grid grid-cols-2 gap-2 mt-2">
                         <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                          {passwordValidations.length ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
-                          <span className={passwordValidations.length ? 'text-slate-200' : 'text-slate-500'}>Mínimo 8 chars</span>
+                          {passwordValidations.length ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <XCircle className="w-3.5 h-3.5 text-slate-400" />}
+                          <span className={passwordValidations.length ? 'text-slate-800' : 'text-slate-500'}>Mínimo 8 chars</span>
                         </div>
                         <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                          {passwordValidations.uppercase ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
-                          <span className={passwordValidations.uppercase ? 'text-slate-200' : 'text-slate-500'}>Una Mayúscula</span>
+                          {passwordValidations.uppercase ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <XCircle className="w-3.5 h-3.5 text-slate-400" />}
+                          <span className={passwordValidations.uppercase ? 'text-slate-800' : 'text-slate-500'}>Una Mayúscula</span>
                         </div>
                         <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                          {passwordValidations.lowercase ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
-                          <span className={passwordValidations.lowercase ? 'text-slate-200' : 'text-slate-500'}>Una Minúscula</span>
+                          {passwordValidations.lowercase ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <XCircle className="w-3.5 h-3.5 text-slate-400" />}
+                          <span className={passwordValidations.lowercase ? 'text-slate-800' : 'text-slate-500'}>Una Minúscula</span>
                         </div>
                         <div className="flex items-center gap-2 text-[11px] sm:text-xs">
-                          {passwordValidations.number ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <XCircle className="w-3.5 h-3.5 text-slate-600" />}
-                          <span className={passwordValidations.number ? 'text-slate-200' : 'text-slate-500'}>Un Número</span>
+                          {passwordValidations.number ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <XCircle className="w-3.5 h-3.5 text-slate-400" />}
+                          <span className={passwordValidations.number ? 'text-slate-800' : 'text-slate-500'}>Un Número</span>
                         </div>
                       </div>
                     </div>
@@ -404,32 +403,32 @@ export function Login() {
                           required
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          className={`w-full bg-white/5 border text-white text-sm rounded-2xl block pl-11 pr-11 p-3.5 transition-all outline-none focus:ring-2 placeholder:text-slate-500 ${
+                          className={`w-full bg-white border text-foreground text-sm rounded-2xl block pl-11 pr-11 p-3.5 transition-all outline-none focus:ring-2 placeholder:text-muted-foreground/60 ${
                             confirmPassword && !passwordsMatch 
-                              ? 'border-red-500/50 focus:ring-red-500/20 focus:border-red-500' 
+                              ? 'border-red-400 focus:ring-red-400/20 focus:border-red-500' 
                               : confirmPassword && passwordsMatch
-                              ? 'border-emerald-500/50 focus:ring-emerald-500/20 focus:border-emerald-500'
-                              : 'border-white/10 focus:ring-indigo-500/50 focus:border-indigo-500 focus:bg-white/10'
+                              ? 'border-emerald-400 focus:ring-emerald-400/20 focus:border-emerald-500'
+                              : 'border-border focus:ring-primary/20 focus:border-primary'
                           }`}
                           placeholder="••••••••"
                         />
                         <button
                           type="button"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                         >
                           {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
                       {confirmPassword && !passwordsMatch && (
-                        <p className="text-[11px] sm:text-xs text-red-400 mt-1.5 ml-1">Las contraseñas no coinciden</p>
+                        <p className="text-[11px] sm:text-xs text-red-500 font-medium mt-1.5 ml-1">Las contraseñas no coinciden</p>
                       )}
                     </div>
 
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-[0_0_20px_rgba(79,70,229,0.3)] disabled:opacity-70 disabled:cursor-not-allowed mt-8 border border-indigo-400/20"
+                      className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-[#0082cc] hover:from-primary/90 hover:to-[#0082cc]/90 text-white font-medium rounded-2xl text-sm px-5 py-4 transition-all duration-300 shadow-lg shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed mt-8 border border-primary/10"
                     >
                       {loading ? (
                         <Loader2 className="h-5 w-5 animate-spin" />
