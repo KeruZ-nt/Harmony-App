@@ -322,11 +322,23 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
             </div>
           ) : (
             <div className="grid gap-6 grid-cols-1 items-start">
-              <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col">
+              {Object.entries(
+                sessions.reduce((acc, session) => {
+                  const day = new Date(session.start_time).getDay();
+                  if (!acc[day]) acc[day] = [];
+                  acc[day].push(session);
+                  return acc;
+                }, {} as Record<number, typeof sessions>)
+              ).sort(([dayA], [dayB]) => Number(dayA) - Number(dayB)).map(([dayStr, daySessions]) => {
+                const dayNum = Number(dayStr);
+                const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][dayNum];
+                
+                return (
+              <div key={dayNum} className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col">
                 <div className="bg-muted/80 px-4 py-3 font-bold text-sm text-foreground border-b border-border/50 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span>Todas las clases</span>
-                    <span className="bg-card px-2 py-0.5 rounded-md text-xs font-medium border border-border/50">{sessions.length} clases</span>
+                    <span>Clases de los {dayName}s</span>
+                    <span className="bg-card px-2 py-0.5 rounded-md text-xs font-medium border border-border/50">{daySessions.length} clases</span>
                   </div>
                   <button
                     onClick={() => handleAddSession()}
@@ -349,7 +361,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-black/5">
-                      {[...sessions]
+                      {[...daySessions]
                         .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
                         .map((session, index) => (
                         <tr key={session.id} className="hover:bg-muted transition-colors">
@@ -483,9 +495,9 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                   </table>
                 </div>
               </div>
+              )})}
             </div>
           )}
-          
         </div>
 
         {/* Footer */}
