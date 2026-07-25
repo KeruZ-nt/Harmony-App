@@ -379,13 +379,13 @@ export default function Schedule() {
                       >
                         <div className={`h-full p-2 sm:p-2.5 rounded-xl border shadow-sm flex flex-col justify-center overflow-hidden backdrop-blur-md relative ${
                           session.type === 'Reprogramación' && session.status === 'Completada' ? 'bg-cyan-500 border-cyan-500 text-white shadow-md shadow-cyan-500/20' :
-                          session.type === 'Reprogramación' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-900 dark:text-cyan-100' :
+                          session.type === 'Reprogramación' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-900' :
                           session.type === 'Cambio de Horario' && session.status === 'Completada' ? 'bg-purple-500 border-purple-500 text-white shadow-md shadow-purple-500/20' :
-                          session.type === 'Cambio de Horario' ? 'bg-purple-500/10 border-purple-500/30 text-purple-900 dark:text-purple-100' :
+                          session.type === 'Cambio de Horario' ? 'bg-purple-500/10 border-purple-500/30 text-purple-900' :
                           session.status === 'Completada' ? 'bg-primary border-primary text-white shadow-md shadow-primary/20' :
                           session.status === 'Feriado' ? 'bg-amber-500/10 border-amber-500/20 text-amber-900' : 
                           session.status === 'Asistió' ? 'bg-green-500/10 border-green-500/20 text-green-900' : 
-                          session.status === 'Falta' ? 'bg-red-500/10 border-red-500/20 text-red-900' : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 text-primary-foreground'
+                          session.status === 'Falta' ? 'bg-red-500/10 border-red-500/20 text-red-900' : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 text-primary'
                         }`}>
                           {session.status !== 'Feriado' && session.status !== 'Asistió' && session.status !== 'Falta' && !session.type && (
                              <div className="absolute inset-0 bg-primary/5 pointer-events-none"></div>
@@ -399,13 +399,13 @@ export default function Schedule() {
                             <div className="flex flex-col items-end gap-1 shrink-0 justify-center">
                                 <span className={`text-[10px] font-bold px-1.5 py-1 rounded leading-none ${
                                 session.type === 'Reprogramación' && session.status === 'Completada' ? 'bg-white/20 text-white' :
-                                session.type === 'Reprogramación' ? 'bg-cyan-500/20 text-cyan-700 dark:text-cyan-400' :
+                                session.type === 'Reprogramación' ? 'bg-cyan-500/20 text-cyan-700' :
                                 session.type === 'Cambio de Horario' && session.status === 'Completada' ? 'bg-white/20 text-white' :
-                                session.type === 'Cambio de Horario' ? 'bg-purple-500/20 text-purple-700 dark:text-purple-400' :
+                                session.type === 'Cambio de Horario' ? 'bg-purple-500/20 text-purple-700' :
                                 session.status === 'Completada' ? 'bg-white/20 text-white' :
                                 session.status === 'Programada' ? 'bg-primary/10 text-primary' :
-                                session.status === 'Asistió' ? 'bg-green-500/20 text-green-600 dark:text-green-400' :
-                                session.status === 'Feriado' ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' :
+                                session.status === 'Asistió' ? 'bg-green-500/20 text-green-600' :
+                                session.status === 'Feriado' ? 'bg-amber-500/20 text-amber-600' :
                                 'bg-muted/80 text-foreground'
                               }`}>
                                 {session.type && session.type !== 'Regular' ? session.type : session.status}
@@ -634,7 +634,7 @@ export default function Schedule() {
                 onClick={() => handleConfirmScheduleChange(false)}
                 className="w-full text-left p-4 rounded-xl border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 transition-colors group"
               >
-                <div className="font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
+                <div className="font-bold text-cyan-700 mb-1 flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
                   Reprogramación Puntual
                 </div>
@@ -647,7 +647,7 @@ export default function Schedule() {
                 onClick={() => handleConfirmScheduleChange(true)}
                 className="w-full text-left p-4 rounded-xl border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-colors group"
               >
-                <div className="font-bold text-purple-700 dark:text-purple-400 mb-1 flex items-center gap-2">
+                <div className="font-bold text-purple-700 mb-1 flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-purple-500"></div>
                   Cambio Definitivo (Masivo)
                 </div>
