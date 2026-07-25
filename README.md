@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/vite.svg" alt="Harmony Logo" width="120" height="120" />
+  <h1 style="font-size: 3rem; margin-bottom: 0;">🎹</h1>
   <h1>Harmony App - Sistema de Gestión de Academias</h1>
   <p><strong>Plataforma moderna y profesional para la administración de academias, alumnos y agendamiento inteligente.</strong></p>
   <p><em>"Gestiona tus clases en perfecta armonía."</em></p>
@@ -18,7 +18,6 @@ Construido con un enfoque en **diseño premium**, **alta usabilidad** (basado en
 - 🏢 **Soporte Multi-Academia (Workspaces):** Administra diferentes sucursales o negocios desde una sola cuenta.
 - 🎓 **Gestión de Alumnos y Planes:** Seguimiento de alumnos por plan (Mensual, Trimestral), frecuencia de asistencia y perfiles vinculados.
 - 📅 **Calendario Inteligente (Schedule):** Panel visual con *drag & drop* para reagendar clases. Sistema automático para **bloquear días y feriados** que desplaza inteligentemente todas las clases en el tiempo sin perder sesiones.
-- 💳 **Control de Pagos:** Seguimiento de fechas de vencimiento y renovación de membresías en base a asistencia o fecha.
 - 👥 **Gestión de Equipo:** Sistema de roles (Propietario, Admin, Colaborador, Alumno) con invitaciones seguras.
 - 📱 **Portal del Alumno:** Interfaz dedicada para que los alumnos puedan ver su historial de clases, próximas sesiones y estado de su plan.
 - 🎨 **Diseño Premium:** Interfaz prístina con tipografía `Rubik`, paleta de colores cuidadosamente seleccionada (`#0082cc`, `#e86d11`, `#f4a305`, `#a5d8f7`), glassmorphism y micro-interacciones fluidas.
