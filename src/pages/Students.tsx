@@ -127,9 +127,9 @@ export default function Students() {
       </div>
 
       {/* Table Area */}
-      <div className="glass rounded-3xl border border-border/50 flex-1 overflow-hidden flex flex-col shadow-md">
-        <div className="overflow-x-auto flex-1 custom-scrollbar p-4 md:p-0">
-          <table className="w-full text-sm text-left block md:table">
+      <div className="glass rounded-3xl border border-border/50 flex-1 flex flex-col shadow-md overflow-hidden">
+        <div className="flex-1 overflow-x-auto custom-scrollbar p-2 sm:p-4 md:p-0">
+          <table className="w-full text-sm text-left flex flex-col md:table">
             <thead className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest bg-muted/40 border-b border-border/50 hidden md:table-header-group">
               <tr>
                 <th className="px-6 py-5">Alumno</th>
@@ -139,7 +139,7 @@ export default function Students() {
                 <th className="px-6 py-5">Estado</th>
               </tr>
             </thead>
-            <tbody className="block md:table-row-group md:divide-y md:divide-border/30">
+            <tbody className="flex flex-col gap-3 md:table-row-group md:divide-y md:divide-border/30 md:gap-0 p-2 md:p-0">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground font-medium">
@@ -166,7 +166,7 @@ export default function Students() {
                   <tr 
                     key={student.id} 
                     onClick={() => setSelectedStudent(student)}
-                    className="grid grid-cols-2 md:table-row bg-card md:bg-transparent border border-border/50 md:border-0 rounded-2xl md:rounded-none mb-4 md:mb-0 p-4 md:p-0 hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row shadow-sm md:shadow-none gap-y-3"
+                    className="grid grid-cols-2 md:table-row bg-card md:bg-transparent border border-border/50 md:border-0 rounded-2xl md:rounded-none p-4 md:p-0 hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row shadow-sm md:shadow-none gap-y-3 w-full"
                   >
                     <td className="col-span-2 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b border-border/10 md:border-0">
                       <div className="font-display font-bold text-lg md:text-base text-foreground group-hover/row:text-primary transition-colors">{student.first_name} {student.last_name}</div>
