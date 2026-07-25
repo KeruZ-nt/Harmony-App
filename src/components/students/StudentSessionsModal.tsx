@@ -184,9 +184,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
         const newHours = newDate.getHours();
         const newMins = newDate.getMinutes();
 
-        const isPause = origDate.getDay() === newDate.getDay() && 
-                        origDate.getHours() === newDate.getHours() && 
-                        origDate.getMinutes() === newDate.getMinutes();
+        const isPause = origDate.getDay() === newDate.getDay();
 
         const updatePromises = sessionsToShift.map(s => {
           const nextStart = new Date(s.start_time);
