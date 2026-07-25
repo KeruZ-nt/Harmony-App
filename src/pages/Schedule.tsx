@@ -23,6 +23,14 @@ export default function Schedule() {
   const [blockReason, setBlockReason] = useState('Feriado');
   const [creatingHoliday, setCreatingHoliday] = useState(false);
 
+  const [showScheduleChangeModal, setShowScheduleChangeModal] = useState(false);
+  const [pendingChange, setPendingChange] = useState<{
+    session: Session,
+    newStart: string,
+    newEnd: string,
+    isDrop: boolean
+  } | null>(null);
+
   useEffect(() => {
     if (activeWorkspace) {
       fetchStudents(activeWorkspace.id);
@@ -129,6 +137,13 @@ export default function Schedule() {
     const newEnd = new Date(targetDate);
     newEnd.setHours(currentEnd.getHours(), currentEnd.getMinutes(), 0, 0);
 
+    // Check deviation
+    if (currentStart.getDay() !== newStart.getDay() || currentStart.getHours() !== newStart.getHours() || currentStart.getMinutes() !== newStart.getMinutes()) {
+      setPendingChange({ session, newStart: newStart.toISOString(), newEnd: newEnd.toISOString(), isDrop: true });
+      setShowScheduleChangeModal(true);
+      return;
+    }
+
     try {
       await updateSession(session.id, {
         start_time: newStart.toISOString(),
@@ -136,7 +151,6 @@ export default function Schedule() {
       });
       addToast({ message: 'Clase reprogramada exitosamente', type: 'success' });
       
-      // Refresh to ensure we have the latest sorted data
       if (activeWorkspace) {
         const start = new Date(currentDate);
         start.setDate(start.getDate() - 30);
@@ -146,6 +160,54 @@ export default function Schedule() {
       }
     } catch (error) {
       addToast({ message: 'Error al reprogramar clase', type: 'error' });
+    }
+  };
+
+  const handleConfirmScheduleChange = async (isDefinitive: boolean) => {
+    if (!pendingChange || !activeWorkspace) return;
+    const { session, newStart, newEnd } = pendingChange;
+
+    try {
+      if (isDefinitive) {
+        // 1. Update this session
+        await updateSession(session.id, {
+          start_time: newStart,
+          end_time: newEnd,
+          type: 'Cambio de Horario'
+        });
+        
+        // 2. Bulk shift future sessions
+        await useSessionStore.getState().bulkShiftSchedule(
+          session.student_id,
+          session.start_time,
+          newStart,
+          newEnd
+        );
+
+        addToast({ message: 'Horario cambiado definitivamente', type: 'success' });
+      } else {
+        // Reprogramación puntual
+        await updateSession(session.id, {
+          start_time: newStart,
+          end_time: newEnd,
+          type: 'Reprogramación'
+        });
+        addToast({ message: 'Clase reprogramada puntualmente', type: 'success' });
+      }
+      
+      setShowScheduleChangeModal(false);
+      setPendingChange(null);
+      setEditingSession(null);
+
+      // Refresh view
+      const start = new Date(currentDate);
+      start.setDate(start.getDate() - 30);
+      const end = new Date(currentDate);
+      end.setDate(end.getDate() + 30);
+      fetchWorkspaceSessions(activeWorkspace.id, start.toISOString(), end.toISOString());
+
+    } catch (error) {
+      addToast({ message: 'Error al procesar el cambio', type: 'error' });
     }
   };
 
@@ -316,11 +378,13 @@ export default function Schedule() {
                         style={{ top: `${topPercentage}%`, height: `${heightPercentage}%`, minHeight: '40px' }}
                       >
                         <div className={`h-full p-2 sm:p-2.5 rounded-xl border shadow-sm flex flex-col justify-center overflow-hidden backdrop-blur-md relative ${
+                          session.type === 'Reprogramación' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-900 dark:text-cyan-100' :
+                          session.type === 'Cambio de Horario' ? 'bg-purple-500/10 border-purple-500/30 text-purple-900 dark:text-purple-100' :
                           session.status === 'Feriado' ? 'bg-amber-500/10 border-amber-500/20 text-amber-900' : 
                           session.status === 'Asistió' ? 'bg-green-500/10 border-green-500/20 text-green-900' : 
                           session.status === 'Falta' ? 'bg-red-500/10 border-red-500/20 text-red-900' : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 text-primary-foreground'
                         }`}>
-                          {session.status !== 'Feriado' && session.status !== 'Asistió' && session.status !== 'Falta' && (
+                          {session.status !== 'Feriado' && session.status !== 'Asistió' && session.status !== 'Falta' && !session.type && (
                              <div className="absolute inset-0 bg-primary/5 pointer-events-none"></div>
                           )}
                           <div className="flex items-center justify-between gap-1 h-full relative z-10">
@@ -331,12 +395,14 @@ export default function Schedule() {
                             </div>
                             <div className="flex flex-col items-end gap-1 shrink-0 justify-center">
                               <span className={`text-[10px] font-bold px-1.5 py-1 rounded leading-none ${
+                                session.type === 'Reprogramación' ? 'bg-cyan-500/20 text-cyan-700 dark:text-cyan-400' :
+                                session.type === 'Cambio de Horario' ? 'bg-purple-500/20 text-purple-700 dark:text-purple-400' :
                                 session.status === 'Programada' ? 'bg-primary/10 text-primary' :
                                 session.status === 'Asistió' ? 'bg-green-500/20 text-green-600 dark:text-green-400' :
                                 session.status === 'Feriado' ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' :
                                 'bg-muted/80 text-foreground'
                               }`}>
-                                {session.status}
+                                {session.type && session.type !== 'Regular' ? session.type : session.status}
                               </span>
                               <span className="text-[10px] font-semibold text-muted-foreground bg-card/50 px-1 rounded leading-none">
                                 {sessionDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
@@ -442,6 +508,23 @@ export default function Schedule() {
               <button
                 onClick={async () => {
                   try {
+                    const originalSession = sessions.find(s => s.id === editingSession.id);
+                    if (originalSession) {
+                      const origStart = new Date(originalSession.start_time);
+                      const newStart = new Date(editingSession.start_time);
+                      if (origStart.getDay() !== newStart.getDay() || origStart.getHours() !== newStart.getHours() || origStart.getMinutes() !== newStart.getMinutes()) {
+                        setPendingChange({ 
+                          session: originalSession, 
+                          newStart: editingSession.start_time, 
+                          newEnd: editingSession.end_time,
+                          isDrop: false
+                        });
+                        setShowScheduleChangeModal(true);
+                        // No cerramos el edit modal todavía por si cancelan
+                        return;
+                      }
+                    }
+
                     await updateSession(editingSession.id, {
                       start_time: editingSession.start_time,
                       end_time: editingSession.end_time,
@@ -529,6 +612,58 @@ export default function Schedule() {
           </div>
         </div>
       )}
+      {/* Schedule Change Modal */}
+      {showScheduleChangeModal && pendingChange && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 p-4">
+          <div className="bg-card w-full max-w-md rounded-3xl shadow-2xl p-6">
+            <h3 className="font-display font-black text-xl mb-2">Desvío de Horario Detectado</h3>
+            <p className="text-muted-foreground mb-6 text-sm">
+              Has movido esta clase a un día o una hora que no coincide con la original. ¿Cómo deseas procesar este cambio?
+            </p>
+            
+            <div className="space-y-4">
+              <button 
+                onClick={() => handleConfirmScheduleChange(false)}
+                className="w-full text-left p-4 rounded-xl border border-cyan-500/30 bg-cyan-500/5 hover:bg-cyan-500/10 transition-colors group"
+              >
+                <div className="font-bold text-cyan-700 dark:text-cyan-400 mb-1 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
+                  Reprogramación Puntual
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Solo mueve esta clase específica. Su horario regular y clases futuras quedarán intactas.
+                </div>
+              </button>
+
+              <button 
+                onClick={() => handleConfirmScheduleChange(true)}
+                className="w-full text-left p-4 rounded-xl border border-purple-500/30 bg-purple-500/5 hover:bg-purple-500/10 transition-colors group"
+              >
+                <div className="font-bold text-purple-700 dark:text-purple-400 mb-1 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                  Cambio Definitivo (Masivo)
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Actualiza esta clase Y mueve masivamente todas las sesiones futuras de este día al nuevo horario.
+                </div>
+              </button>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button 
+                onClick={() => {
+                  setShowScheduleChangeModal(false);
+                  setPendingChange(null);
+                }}
+                className="px-5 py-2 text-sm font-bold text-muted-foreground hover:bg-muted rounded-xl"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

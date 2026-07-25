@@ -55,7 +55,8 @@ export interface Session {
   start_time: string; // ISO String
   end_time: string; // ISO String
   observation: string | null;
-  status: 'Programada' | 'Asistió' | 'Falta' | 'Feriado' | 'Reprogramada' | 'Corrida' | string; // Keep flexible as requested, defaulting to Programada/Asistió
+  status: 'Programada' | 'Asistió' | 'Falta' | 'Feriado' | 'Reprogramada' | 'Corrida' | string;
+  type?: 'Regular' | 'Reprogramación' | 'Cambio de Horario';
   google_event_id: string | null;
   created_at: string;
   students?: {

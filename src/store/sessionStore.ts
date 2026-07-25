@@ -11,6 +11,7 @@ interface SessionState {
   addSession: (session: Omit<Session, 'id' | 'created_at'>) => Promise<void>;
   deleteSession: (id: string) => Promise<void>;
   shiftSessionsForward: (studentId: string, fromSessionId: string, daysToShift: number) => Promise<void>;
+  bulkShiftSchedule: (studentId: string, originalStartIso: string, newStartIso: string, newEndIso: string) => Promise<void>;
   blockDay: (workspaceId: string, dateStr: string, reason: string) => Promise<void>;
 }
 
@@ -167,6 +168,63 @@ export const useSessionStore = create<SessionState>((set) => ({
       
     } catch (error) {
       console.error('Error shifting sessions:', error);
+      throw error;
+    }
+  },
+
+  bulkShiftSchedule: async (studentId: string, originalStartIso: string, newStartIso: string, newEndIso: string) => {
+    try {
+      const origDate = new Date(originalStartIso);
+      const newDate = new Date(newStartIso);
+      const newEnd = new Date(newEndIso);
+
+      const oldDay = origDate.getDay();
+      const oldHours = origDate.getHours();
+      const oldMins = origDate.getMinutes();
+
+      const newHours = newDate.getHours();
+      const newMins = newDate.getMinutes();
+      const endHours = newEnd.getHours();
+      const endMins = newEnd.getMinutes();
+
+      // Buscamos todas las futuras de ese mismo día y misma hora
+      const { data: futureSessions } = await supabase
+        .from('sessions')
+        .select('*')
+        .eq('student_id', studentId)
+        .eq('status', 'Programada')
+        .gt('start_time', originalStartIso); // Mayores estricto (la actual ya la modificamos)
+
+      if (!futureSessions) return;
+
+      const sessionsToShift = futureSessions.filter(s => {
+        const d = new Date(s.start_time);
+        return d.getDay() === oldDay && d.getHours() === oldHours && d.getMinutes() === oldMins;
+      });
+
+      // Calculamos la diferencia exacta en días entre la original y la nueva
+      // Esto respeta el salto de semana si lo hubiera
+      const dayDiff = Math.round((newDate.getTime() - origDate.getTime()) / (1000 * 3600 * 24));
+
+      const promises = sessionsToShift.map(async (s) => {
+        const nextStart = new Date(s.start_time);
+        nextStart.setDate(nextStart.getDate() + dayDiff);
+        nextStart.setHours(newHours, newMins, 0, 0);
+
+        const nextEnd = new Date(s.end_time);
+        nextEnd.setDate(nextEnd.getDate() + dayDiff);
+        nextEnd.setHours(endHours, endMins, 0, 0);
+
+        return supabase.from('sessions').update({
+          start_time: nextStart.toISOString(),
+          end_time: nextEnd.toISOString(),
+          type: 'Cambio de Horario'
+        }).eq('id', s.id);
+      });
+
+      await Promise.all(promises);
+    } catch (error) {
+      console.error('Error in bulkShiftSchedule:', error);
       throw error;
     }
   },

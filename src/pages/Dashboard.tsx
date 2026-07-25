@@ -167,10 +167,14 @@ export default function Dashboard() {
       <div className="mb-8 relative rounded-3xl overflow-hidden glass p-8 sm:p-10 border-0 shadow-xl bg-gradient-to-r from-primary/10 via-indigo-500/5 to-purple-500/10">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
         <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-indigo-600 shadow-md shadow-primary/30 flex items-center justify-center text-white shrink-0">
-            <span className="text-4xl font-display font-bold leading-none tracking-tighter uppercase">
-              {activeWorkspace?.name?.charAt(0) || profile?.full_name?.charAt(0) || 'A'}
-            </span>
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary to-indigo-600 shadow-md shadow-primary/30 flex items-center justify-center text-white shrink-0 overflow-hidden">
+            {activeWorkspace?.logo_url ? (
+              <img src={activeWorkspace.logo_url} alt="Logo de academia" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-4xl font-display font-bold leading-none tracking-tighter uppercase">
+                {activeWorkspace?.name?.charAt(0) || profile?.full_name?.charAt(0) || 'A'}
+              </span>
+            )}
           </div>
           <div className="text-center sm:text-left">
             <h1 className="text-2xl sm:text-3xl font-black font-display tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
