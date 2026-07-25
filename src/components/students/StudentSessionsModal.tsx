@@ -15,7 +15,7 @@ interface StudentSessionsModalProps {
 }
 
 export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew }: StudentSessionsModalProps) {
-  const { sessions, loading, fetchSessionsByStudent, updateSession, deleteSession, addSession, shiftSessionsForward, bulkShiftSchedule } = useSessionStore();
+  const { sessions, loading, fetchSessionsByStudent, updateSession, deleteSession, addSession, shiftSessionsForward } = useSessionStore();
   const { addToast } = useToastStore();
   const [addingSession, setAddingSession] = useState(false);
   const [editingSessionData, setEditingSessionData] = useState<{
