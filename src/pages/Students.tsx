@@ -168,8 +168,8 @@ export default function Students() {
                     onClick={() => setSelectedStudent(student)}
                     className="grid grid-cols-2 md:table-row bg-card md:bg-transparent border border-border/50 md:border-0 rounded-2xl md:rounded-none p-4 md:p-0 hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row shadow-sm md:shadow-none gap-y-3 w-full"
                   >
-                    <td className="col-span-2 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b border-border/10 md:border-0">
-                      <div className="font-display font-bold text-lg md:text-base text-foreground group-hover/row:text-primary transition-colors">{student.first_name} {student.last_name}</div>
+                    <td className="col-span-2 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b border-border/10 md:border-0 min-w-0">
+                      <div className="font-display font-bold text-lg md:text-base text-foreground group-hover/row:text-primary transition-colors break-words">{student.first_name} {student.last_name}</div>
                       {student.grade_level && <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-1">{student.grade_level}</div>}
                     </td>
                     <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b-0 border-border/10">
