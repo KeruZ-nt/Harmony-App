@@ -187,7 +187,6 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
         const isPause = origDate.getDay() === newDate.getDay() && 
                         origDate.getHours() === newDate.getHours() && 
                         origDate.getMinutes() === newDate.getMinutes();
-        const assignedType = isPause ? 'Regular' : 'Cambio de Horario';
 
         const updatePromises = sessionsToShift.map(s => {
           const nextStart = new Date(s.start_time);
@@ -201,14 +200,15 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
           return updateSession(s.id, {
             start_time: nextStart.toISOString(),
             end_time: nextEnd.toISOString(),
-            type: assignedType
+            type: isPause ? (s.type || 'Regular') : 'Cambio de Horario'
           });
         });
 
+        const currentSession = sessions.find(s => s.id === shiftPrompt.sessionId);
         await updateSession(shiftPrompt.sessionId, { 
           start_time: shiftPrompt.newStartIso,
           end_time: shiftPrompt.newEndIso,
-          type: assignedType
+          type: isPause ? (currentSession?.type || 'Regular') : 'Cambio de Horario'
         });
         
         await Promise.all(updatePromises);
