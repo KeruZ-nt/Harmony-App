@@ -40,8 +40,13 @@ export function NewStudentModal({ isOpen, onClose }: NewStudentModalProps) {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   });
 
+  const [isStartDateManuallySet, setIsStartDateManuallySet] = useState(false);
+
   useEffect(() => {
-    if (selectedSchedules.length > 0) {
+    // Calcular el próximo día de clase basado en los seleccionados
+    // Only auto-calculate if the user hasn't manually set a date yet,
+    // or if the date hasn't been initialized.
+    if (selectedSchedules.length > 0 && !isStartDateManuallySet) {
       const dayMap: Record<string, number> = {
         'Domingo': 0, 'Lunes': 1, 'Martes': 2, 'Miércoles': 3,
         'Jueves': 4, 'Viernes': 5, 'Sábado': 6
@@ -332,12 +337,15 @@ export function NewStudentModal({ isOpen, onClose }: NewStudentModalProps) {
                   <div className="sm:w-[calc(50%-0.5rem)]">
                     <DatePicker
                       value={startDate}
-                      onChange={setStartDate}
+                      onChange={(newDate) => {
+                        setStartDate(newDate);
+                        setIsStartDateManuallySet(true);
+                      }}
                       placeholder="Ej. 24/07/2026"
                     />
                   </div>
                   <p className="text-xs text-muted-foreground mt-1.5 ml-1">
-                    La fecha de inicio se calcula sola según tus días elegidos, pero puedes cambiarla.
+                    La fecha de inicio se calcula sola, pero puedes cambiarla.
                   </p>
                 </div>
 

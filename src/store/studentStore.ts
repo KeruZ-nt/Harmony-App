@@ -41,9 +41,10 @@ export const useStudentStore = create<StudentState>((set) => ({
 
   addStudent: async (studentData, schedules) => {
     try {
-      // Calcular next_payment_date
-      const startDate = new Date(studentData.start_date);
-      const nextPaymentDate = new Date(startDate);
+      // Calcular next_payment_date usando timezone local seguro
+      const [year, month, day] = studentData.start_date.split('-').map(Number);
+      const startDate = new Date(year, month - 1, day);
+      const nextPaymentDate = new Date(year, month - 1, day);
       if (studentData.plan === 'Mensual') nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 1);
       else if (studentData.plan === 'Trimestral') nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 3);
       else if (studentData.plan === 'Semestral') nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 6);
