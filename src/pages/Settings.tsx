@@ -322,8 +322,12 @@ export default function Settings() {
               <div className="space-y-3">
                 {colleagues.map(c => (
                   <div key={c.id} className="flex items-center gap-3 bg-card p-3 rounded-xl border border-border/50 dark:border-border/50">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                      {c.full_name?.charAt(0) || c.email?.charAt(0) || '?'}
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm overflow-hidden border border-primary/20">
+                      {c.avatar_url ? (
+                        <img src={c.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        c.full_name ? c.full_name.substring(0, 2).toUpperCase() : (c.email?.charAt(0).toUpperCase() || '?')
+                      )}
                     </div>
                     <div>
                       <p className="text-sm font-medium">{c.full_name || 'Sin nombre'}</p>
