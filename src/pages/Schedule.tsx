@@ -380,6 +380,7 @@ export default function Schedule() {
                         <div className={`h-full p-2 sm:p-2.5 rounded-xl border shadow-sm flex flex-col justify-center overflow-hidden backdrop-blur-md relative ${
                           session.type === 'Reprogramación' ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-900 dark:text-cyan-100' :
                           session.type === 'Cambio de Horario' ? 'bg-purple-500/10 border-purple-500/30 text-purple-900 dark:text-purple-100' :
+                          session.status === 'Completada' ? 'bg-primary border-primary text-white shadow-md shadow-primary/20' :
                           session.status === 'Feriado' ? 'bg-amber-500/10 border-amber-500/20 text-amber-900' : 
                           session.status === 'Asistió' ? 'bg-green-500/10 border-green-500/20 text-green-900' : 
                           session.status === 'Falta' ? 'bg-red-500/10 border-red-500/20 text-red-900' : 'bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 text-primary-foreground'
@@ -389,14 +390,15 @@ export default function Schedule() {
                           )}
                           <div className="flex items-center justify-between gap-1 h-full relative z-10">
                             <div className={`font-display font-bold text-xs sm:text-sm truncate leading-tight ${
-                              session.status === 'Asistió' || session.status === 'Falta' || session.status === 'Feriado' ? '' : 'text-foreground'
+                              session.status === 'Asistió' || session.status === 'Falta' || session.status === 'Feriado' || session.status === 'Completada' ? '' : 'text-foreground'
                             }`}>
                               {session.students?.first_name} <span className="hidden sm:inline">{session.students?.last_name}</span>
                             </div>
                             <div className="flex flex-col items-end gap-1 shrink-0 justify-center">
-                              <span className={`text-[10px] font-bold px-1.5 py-1 rounded leading-none ${
+                                <span className={`text-[10px] font-bold px-1.5 py-1 rounded leading-none ${
                                 session.type === 'Reprogramación' ? 'bg-cyan-500/20 text-cyan-700 dark:text-cyan-400' :
                                 session.type === 'Cambio de Horario' ? 'bg-purple-500/20 text-purple-700 dark:text-purple-400' :
+                                session.status === 'Completada' ? 'bg-white/20 text-white' :
                                 session.status === 'Programada' ? 'bg-primary/10 text-primary' :
                                 session.status === 'Asistió' ? 'bg-green-500/20 text-green-600 dark:text-green-400' :
                                 session.status === 'Feriado' ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400' :
@@ -404,7 +406,9 @@ export default function Schedule() {
                               }`}>
                                 {session.type && session.type !== 'Regular' ? session.type : session.status}
                               </span>
-                              <span className="text-[10px] font-semibold text-muted-foreground bg-card/50 px-1 rounded leading-none">
+                              <span className={`text-[10px] font-semibold px-1 rounded leading-none ${
+                                session.status === 'Completada' ? 'text-white/80 bg-black/10' : 'text-muted-foreground bg-card/50'
+                              }`}>
                                 {sessionDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             </div>
