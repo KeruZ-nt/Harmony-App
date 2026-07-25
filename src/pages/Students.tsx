@@ -3,7 +3,7 @@ import { useWorkspaceStore } from '../store/workspaceStore';
 import { useStudentStore } from '../store/studentStore';
 import { NewStudentModal } from '../components/students/NewStudentModal';
 import { StudentDetailsModal } from '../components/students/StudentDetailsModal';
-import { Search, Plus, Calendar, BookOpen, Users } from 'lucide-react';
+import { Search, UserPlus, Calendar, BookOpen, Users } from 'lucide-react';
 import { Select } from '../components/ui/Select';
 import type { Student } from '../types';
 
@@ -73,10 +73,10 @@ export default function Students() {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary/90 hover:to-indigo-600 text-white px-4 sm:px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:shadow-primary/40"
+            className="flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary/90 hover:to-indigo-600 text-white w-full sm:w-auto px-4 sm:px-6 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:shadow-primary/40 mt-4 sm:mt-0"
           >
-            <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Nuevo Alumno</span>
+            <UserPlus className="w-5 h-5 sm:w-4 sm:h-4" />
+            <span>Nuevo Alumno</span>
           </button>
         </div>
       </div>
@@ -126,9 +126,9 @@ export default function Students() {
 
       {/* Table Area */}
       <div className="glass rounded-3xl border border-border/50 flex-1 overflow-hidden flex flex-col shadow-md">
-        <div className="overflow-x-auto flex-1 custom-scrollbar">
-          <table className="w-full text-sm text-left">
-            <thead className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest bg-muted/40 border-b border-border/50">
+        <div className="overflow-x-auto flex-1 custom-scrollbar p-4 md:p-0">
+          <table className="w-full text-sm text-left block md:table">
+            <thead className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest bg-muted/40 border-b border-border/50 hidden md:table-header-group">
               <tr>
                 <th className="px-6 py-5">Alumno</th>
                 <th className="px-6 py-5">Días y Horarios</th>
@@ -137,7 +137,7 @@ export default function Students() {
                 <th className="px-6 py-5">Estado</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/30">
+            <tbody className="block md:table-row-group md:divide-y md:divide-border/30">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground font-medium">
@@ -164,13 +164,14 @@ export default function Students() {
                   <tr 
                     key={student.id} 
                     onClick={() => setSelectedStudent(student)}
-                    className="hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row"
+                    className="block md:table-row bg-card md:bg-transparent border border-border/50 md:border-0 rounded-2xl md:rounded-none mb-4 md:mb-0 p-4 md:p-0 hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row shadow-sm md:shadow-none"
                   >
-                    <td className="px-6 py-4">
-                      <div className="font-display font-bold text-base text-foreground group-hover/row:text-primary transition-colors">{student.first_name} {student.last_name}</div>
+                    <td className="block md:table-cell px-2 py-2 md:px-6 md:py-4 border-b border-border/10 md:border-0">
+                      <div className="font-display font-bold text-lg md:text-base text-foreground group-hover/row:text-primary transition-colors">{student.first_name} {student.last_name}</div>
                       {student.grade_level && <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-1">{student.grade_level}</div>}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="block md:table-cell px-2 py-3 md:px-6 md:py-4 border-b border-border/10 md:border-0">
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Días y Horarios</div>
                       {student.schedule_days ? (
                         <div className="flex flex-col gap-1 text-sm text-muted-foreground">
                           {student.schedule_days.split(' y ').map((schedule, idx) => (
@@ -180,25 +181,28 @@ export default function Students() {
                             </div>
                           ))}
                         </div>
-                      ) : '-'}
+                      ) : <span className="text-muted-foreground/50">-</span>}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="block md:table-cell px-2 py-3 md:px-6 md:py-4 border-b border-border/10 md:border-0">
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Plan y Frecuencia</div>
                       <div className="font-medium text-[#e86d11] flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
                         {student.plan}
                       </div>
                       <div className="text-xs text-muted-foreground mt-0.5">{student.frequency}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="block md:table-cell px-2 py-3 md:px-6 md:py-4 border-b border-border/10 md:border-0">
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Contacto</div>
                       {(student.contact_name || student.contact_phone || student.contact_email) ? (
                         <div className="flex flex-col gap-0.5">
                           {student.contact_name && <div className="text-sm font-medium">{student.contact_name}</div>}
                           {student.contact_phone && <div className="text-xs text-muted-foreground">{student.contact_phone}</div>}
-                          {student.contact_email && <div className="text-xs text-muted-foreground truncate max-w-[150px]" title={student.contact_email}>{student.contact_email}</div>}
+                          {student.contact_email && <div className="text-xs text-muted-foreground truncate max-w-[200px]" title={student.contact_email}>{student.contact_email}</div>}
                         </div>
-                      ) : '-'}
+                      ) : <span className="text-muted-foreground/50">-</span>}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="block md:table-cell px-2 py-3 md:px-6 md:py-4 flex justify-between items-center md:table-cell">
+                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden">Estado</div>
                       {getStatusBadge(student.status)}
                     </td>
                   </tr>
