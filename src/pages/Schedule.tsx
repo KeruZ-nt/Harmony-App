@@ -246,9 +246,9 @@ export default function Schedule() {
   });
 
   return (
-    <div className="flex flex-col w-full h-full min-h-[500px]">
+    <div className="flex flex-col w-full min-h-full lg:h-full">
       {/* Header Controls */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6 shrink-0">
         <div className="flex items-center gap-6">
           <div className="flex glass rounded-2xl shadow-sm border border-border/50 p-1.5">
             <button onClick={prevWeek} className="p-2 hover:bg-muted/80 rounded-xl transition-colors">

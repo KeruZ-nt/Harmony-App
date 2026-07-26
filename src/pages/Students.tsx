@@ -52,10 +52,10 @@ export default function Students() {
   };
 
   return (
-    <div className="space-y-6 h-full flex flex-col animate-in fade-in duration-500">
+    <div className="space-y-6 min-h-full md:h-full flex flex-col animate-in fade-in duration-500">
       
       {/* Header Section Espectacular */}
-      <div className="relative rounded-3xl overflow-hidden glass p-8 border-0 shadow-lg bg-gradient-to-r from-primary/10 via-indigo-500/5 to-purple-500/10">
+      <div className="relative rounded-3xl overflow-hidden glass p-8 border-0 shadow-lg bg-gradient-to-r from-primary/10 via-indigo-500/5 to-purple-500/10 shrink-0">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
         <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
           <div className="flex items-center gap-4">
@@ -89,7 +89,7 @@ export default function Students() {
       </div>
 
       {/* Toolbar */}
-      <div className="glass rounded-3xl p-5 flex flex-col lg:flex-row gap-5 items-start lg:items-center justify-between border-border/50 shadow-sm relative group z-20">
+      <div className="glass rounded-3xl p-5 flex flex-col lg:flex-row gap-5 items-start lg:items-center justify-between border-border/50 shadow-sm relative group z-20 shrink-0">
         <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
           <div className="absolute top-1/2 left-0 w-32 h-32 bg-primary/5 rounded-full blur-[40px] -translate-y-1/2"></div>
         </div>
