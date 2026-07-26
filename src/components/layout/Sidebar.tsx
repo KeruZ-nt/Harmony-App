@@ -5,8 +5,7 @@ import {
   Users,
   Calendar,
   Settings,
-  BookOpen,
-  X
+  BookOpen
 } from 'lucide-react';
 
 const adminNavigation = [
