@@ -146,7 +146,7 @@ export function RenewStudentModal({ student, isOpen, onClose }: RenewStudentModa
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 p-4">
       <div className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border/50 bg-blue-50/50">
+        <div className="flex items-center justify-between p-6 border-b border-border/50 bg-blue-50/50 shrink-0">
           <div>
             <h2 className="text-xl font-bold font-sans text-blue-900">Renovar Periodo</h2>
             <p className="text-sm text-blue-700/70">
@@ -253,7 +253,7 @@ export function RenewStudentModal({ student, isOpen, onClose }: RenewStudentModa
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-border/50 bg-muted flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+        <div className="p-4 border-t border-border/50 bg-muted flex flex-col-reverse sm:flex-row sm:justify-end gap-3 shrink-0">
           <button
             type="button"
             onClick={onClose}

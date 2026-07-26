@@ -214,7 +214,7 @@ export function NewStudentModal({ isOpen, onClose }: NewStudentModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 p-4">
       <div className="bg-card w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-border/50">
+        <div className="flex items-center justify-between p-6 border-b border-border/50 shrink-0">
           <h2 className="text-xl font-bold font-sans">Registrar Nuevo Alumno</h2>
           <button onClick={onClose} className="p-2 hover:bg-foreground/5 rounded-xl transition-colors">
             <X className="w-5 h-5 text-muted-foreground" />
@@ -443,7 +443,7 @@ export function NewStudentModal({ isOpen, onClose }: NewStudentModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-border/50 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 bg-muted/50 rounded-b-3xl">
+        <div className="p-6 border-t border-border/50 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 bg-muted/50 rounded-b-3xl shrink-0">
           <button
             type="button"
             onClick={onClose}

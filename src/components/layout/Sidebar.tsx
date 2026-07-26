@@ -54,14 +54,6 @@ export const Sidebar = ({ isOpen = false, setIsOpen }: SidebarProps) => {
             </div>
             <span className="text-xl font-bold tracking-tight text-foreground">Harmony App</span>
           </div>
-          {setIsOpen && (
-            <button 
-              onClick={() => setIsOpen(false)}
-              className="lg:hidden rounded-lg p-1.5 hover:bg-foreground/5 transition-colors text-muted-foreground"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          )}
         </div>
 
         <nav className="flex-1 space-y-1.5">
