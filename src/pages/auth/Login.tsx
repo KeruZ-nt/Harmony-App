@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Mail, Lock, User, Building, ArrowRight, Loader2, CheckCircle2, XCircle, Eye, EyeOff, CalendarCheck, Package, UsersRound, Store } from 'lucide-react';
+import { Mail, Lock, User, Building, ArrowRight, Loader2, CheckCircle2, XCircle, Eye, EyeOff, CalendarCheck, ClipboardList, UsersRound, Clock } from 'lucide-react';
 import { useToastStore } from '../../store/toastStore';
 import { useAuthStore } from '../../store/authStore';
 
@@ -167,7 +167,7 @@ export function Login() {
             La manera más inteligente de gestionar tu academia.
           </h1>
           <p className="text-lg text-slate-600 mb-8 max-w-md font-medium leading-relaxed">
-            Centraliza la administración de tus alumnos, asistencias, inventario y ventas en una sola plataforma rápida, moderna y segura.
+            Plataforma diseñada para educadores y profesores independientes. Simplifica el registro de alumnos, controla asistencias y organiza tu información en un solo lugar.
           </p>
           <div className="grid grid-cols-2 gap-4 mt-8">
             <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
@@ -179,12 +179,12 @@ export function Login() {
               <span className="font-bold text-slate-800 text-sm">Control de Asistencia</span>
             </div>
             <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <Package className="w-6 h-6 text-[#e86d11]" />
-              <span className="font-bold text-slate-800 text-sm">Inventario y Ventas</span>
+              <ClipboardList className="w-6 h-6 text-[#e86d11]" />
+              <span className="font-bold text-slate-800 text-sm">Historial de Sesiones</span>
             </div>
             <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <Store className="w-6 h-6 text-purple-500" />
-              <span className="font-bold text-slate-800 text-sm">Múltiples Sucursales</span>
+              <Clock className="w-6 h-6 text-purple-500" />
+              <span className="font-bold text-slate-800 text-sm">Ahorro de Tiempo</span>
             </div>
           </div>
 
