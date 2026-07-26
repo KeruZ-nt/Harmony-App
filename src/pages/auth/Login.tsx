@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Mail, Lock, User, Building, ArrowRight, Loader2, CheckCircle2, XCircle, Eye, EyeOff, CalendarCheck, CreditCard, UsersRound, Music } from 'lucide-react';
+import { Mail, Lock, User, Building, ArrowRight, Loader2, CheckCircle2, XCircle, Eye, EyeOff, CalendarCheck, Package, UsersRound, Store } from 'lucide-react';
 import { useToastStore } from '../../store/toastStore';
 import { useAuthStore } from '../../store/authStore';
 
@@ -163,25 +163,28 @@ export function Login() {
             Harmony App
           </div>
           
-          <h1 className="text-4xl xl:text-5xl font-black mb-6 leading-tight text-slate-900">
+          <h1 className="text-4xl xl:text-5xl font-black mb-4 leading-tight text-slate-900">
             La manera más inteligente de gestionar tu academia.
           </h1>
+          <p className="text-lg text-slate-600 mb-8 max-w-md font-medium leading-relaxed">
+            Centraliza la administración de tus alumnos, asistencias, inventario y ventas en una sola plataforma rápida, moderna y segura.
+          </p>
           <div className="grid grid-cols-2 gap-4 mt-8">
             <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <CalendarCheck className="w-6 h-6 text-[#0082cc]" />
+              <UsersRound className="w-6 h-6 text-[#0082cc]" />
+              <span className="font-bold text-slate-800 text-sm">Gestión de Alumnos</span>
+            </div>
+            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
+              <CalendarCheck className="w-6 h-6 text-emerald-500" />
               <span className="font-bold text-slate-800 text-sm">Control de Asistencia</span>
             </div>
             <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <CreditCard className="w-6 h-6 text-emerald-500" />
-              <span className="font-bold text-slate-800 text-sm">Gestión de Pagos</span>
+              <Package className="w-6 h-6 text-[#e86d11]" />
+              <span className="font-bold text-slate-800 text-sm">Inventario y Ventas</span>
             </div>
             <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <UsersRound className="w-6 h-6 text-[#e86d11]" />
-              <span className="font-bold text-slate-800 text-sm">Alumnos y Profesores</span>
-            </div>
-            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <Music className="w-6 h-6 text-purple-500" />
-              <span className="font-bold text-slate-800 text-sm">Excelencia Musical</span>
+              <Store className="w-6 h-6 text-purple-500" />
+              <span className="font-bold text-slate-800 text-sm">Múltiples Sucursales</span>
             </div>
           </div>
 
