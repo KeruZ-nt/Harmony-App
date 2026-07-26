@@ -364,7 +364,7 @@ export default function Profile() {
               <X className="w-5 h-5" />
             </button>
             
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2 pr-10">
               <Mail className="w-5 h-5 text-primary" />
               Cambiar Correo Electrónico
             </h3>
@@ -416,7 +416,7 @@ export default function Profile() {
               <X className="w-5 h-5" />
             </button>
             
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2 pr-10">
               <Key className="w-5 h-5 text-primary" />
               Cambiar Contraseña
             </h3>
