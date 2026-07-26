@@ -15,8 +15,9 @@ interface SessionData {
 export default function StudentPortal() {
   const { user, profile } = useAuthStore();
   const { activeWorkspace } = useWorkspaceStore();
-  
   const [loading, setLoading] = useState(true);
+  const [upcomingSessions, setUpcomingSessions] = useState<SessionData[]>([]);
+  const [allSessions, setAllSessions] = useState<SessionData[]>([]);
   const { portalStudents, selectedStudentId, setPortalStudents, setSelectedStudentId } = usePortalStore();
 
   const student = portalStudents.find(s => s.id === selectedStudentId) || null;

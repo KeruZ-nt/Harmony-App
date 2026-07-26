@@ -175,6 +175,7 @@ export const Header = ({ hideLogo = false, onMenuClick }: HeaderProps) => {
             <div className="px-4 py-3 border-b border-border/50">
               <p className="text-sm font-medium leading-none">{profile?.full_name || 'Usuario'}</p>
               <p className="text-xs text-muted-foreground mt-1 truncate">{profile?.email}</p>
+            </div>
             <div className="p-1">
               <Link
                 to="/profile"
