@@ -109,7 +109,11 @@ export default function Schedule() {
     e.preventDefault();
     
     // Check if target day is blocked
-    const targetDateStr = targetDate.toISOString().split('T')[0];
+    const targetDateStr = [
+      targetDate.getFullYear(),
+      String(targetDate.getMonth() + 1).padStart(2, '0'),
+      String(targetDate.getDate()).padStart(2, '0')
+    ].join('-');
     const isBlocked = blockedDays.some(b => b.date === targetDateStr);
     if (isBlocked) {
       addToast({ message: 'No puedes mover clases a un día bloqueado', type: 'error' });
@@ -327,7 +331,11 @@ export default function Schedule() {
             {/* Days Columns */}
             {weekDays.map((date, i) => {
               const isToday = date.toDateString() === new Date().toDateString();
-              const dateStr = date.toISOString().split('T')[0];
+              const dateStr = [
+                date.getFullYear(),
+                String(date.getMonth() + 1).padStart(2, '0'),
+                String(date.getDate()).padStart(2, '0')
+              ].join('-');
               const blockedDay = blockedDays.find(b => b.date === dateStr);
               const isBlocked = !!blockedDay;
 
@@ -434,7 +442,11 @@ export default function Schedule() {
         {weekDays.map((date, i) => {
           const isToday = date.toDateString() === new Date().toDateString();
           const dayName = date.toLocaleDateString('es-ES', { weekday: 'long' });
-          const dateStr = date.toISOString().split('T')[0];
+          const dateStr = [
+            date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, '0'),
+            String(date.getDate()).padStart(2, '0')
+          ].join('-');
           const blockedDay = blockedDays.find(b => b.date === dateStr);
           const isBlocked = !!blockedDay;
 
