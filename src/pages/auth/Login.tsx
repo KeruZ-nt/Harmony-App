@@ -163,27 +163,35 @@ export function Login() {
             Harmony App
           </div>
           
-          <h1 className="text-4xl xl:text-5xl font-black mb-4 leading-tight text-slate-900">
+          <h1 className="text-4xl xl:text-5xl font-black mb-6 leading-tight text-transparent bg-clip-text bg-gradient-to-br from-slate-900 via-slate-800 to-slate-500">
             La manera más inteligente de gestionar tu academia.
           </h1>
-          <p className="text-lg text-slate-600 mb-8 max-w-md font-medium leading-relaxed">
+          <p className="text-lg text-slate-600 mb-10 max-w-md font-medium leading-relaxed">
             Plataforma diseñada para educadores y profesores independientes. Simplifica el registro de alumnos, controla asistencias y organiza tu información en un solo lugar.
           </p>
-          <div className="grid grid-cols-2 gap-4 mt-8">
-            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <UsersRound className="w-6 h-6 text-[#0082cc]" />
+          <div className="grid grid-cols-2 gap-5 mt-8">
+            <div className="group flex flex-col gap-3 p-5 bg-white/70 hover:bg-white/95 rounded-2xl border border-white/60 hover:border-blue-200/60 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 backdrop-blur-md cursor-default">
+              <div className="bg-blue-100/50 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <UsersRound className="w-6 h-6 text-[#0082cc]" />
+              </div>
               <span className="font-bold text-slate-800 text-sm">Gestión de Alumnos</span>
             </div>
-            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <CalendarCheck className="w-6 h-6 text-emerald-500" />
+            <div className="group flex flex-col gap-3 p-5 bg-white/70 hover:bg-white/95 rounded-2xl border border-white/60 hover:border-emerald-200/60 shadow-sm hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 backdrop-blur-md cursor-default">
+              <div className="bg-emerald-100/50 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                <CalendarCheck className="w-6 h-6 text-emerald-500" />
+              </div>
               <span className="font-bold text-slate-800 text-sm">Control de Asistencia</span>
             </div>
-            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <ClipboardList className="w-6 h-6 text-[#e86d11]" />
+            <div className="group flex flex-col gap-3 p-5 bg-white/70 hover:bg-white/95 rounded-2xl border border-white/60 hover:border-orange-200/60 shadow-sm hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 backdrop-blur-md cursor-default">
+              <div className="bg-orange-100/50 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <ClipboardList className="w-6 h-6 text-[#e86d11]" />
+              </div>
               <span className="font-bold text-slate-800 text-sm">Historial de Sesiones</span>
             </div>
-            <div className="flex flex-col gap-2 p-4 bg-white/60 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
-              <Clock className="w-6 h-6 text-purple-500" />
+            <div className="group flex flex-col gap-3 p-5 bg-white/70 hover:bg-white/95 rounded-2xl border border-white/60 hover:border-purple-200/60 shadow-sm hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 backdrop-blur-md cursor-default">
+              <div className="bg-purple-100/50 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                <Clock className="w-6 h-6 text-purple-500" />
+              </div>
               <span className="font-bold text-slate-800 text-sm">Ahorro de Tiempo</span>
             </div>
           </div>
