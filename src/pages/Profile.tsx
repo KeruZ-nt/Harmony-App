@@ -222,7 +222,7 @@ export default function Profile() {
                    profile?.role === 'student' ? 'Alumno' : 'Colaborador';
 
   return (
-    <div className="p-4 md:p-6 w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 h-full flex flex-col justify-center">
+    <div className="p-4 md:p-6 w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 min-h-[600px] md:min-h-full flex flex-col justify-center">
       
       <div className="relative rounded-3xl overflow-hidden glass p-5 sm:p-6 border-0 shadow-lg bg-gradient-to-r from-primary/10 via-indigo-500/5 to-purple-500/10 mb-4 shrink-0">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
