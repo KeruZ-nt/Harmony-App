@@ -129,17 +129,17 @@ export default function Students() {
       {/* Table Area */}
       <div className="glass rounded-3xl border border-border/50 flex-1 flex flex-col shadow-md overflow-hidden">
         <div className="flex-1 overflow-x-auto custom-scrollbar p-2 sm:p-4 md:p-0">
-          <table className="w-full text-sm text-left flex flex-col md:table">
-            <thead className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest bg-muted/40 border-b border-border/50 hidden md:table-header-group">
+          <table className="w-full text-sm text-left whitespace-nowrap">
+            <thead className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest bg-muted/40 border-b border-border/50">
               <tr>
-                <th className="px-6 py-5">Alumno</th>
-                <th className="px-6 py-5">Días y Horarios</th>
-                <th className="px-6 py-5">Plan y Frecuencia</th>
-                <th className="px-6 py-5">Contacto</th>
-                <th className="px-6 py-5">Estado</th>
+                <th className="px-4 py-4 md:px-6 md:py-5">Alumno</th>
+                <th className="px-4 py-4 md:px-6 md:py-5">Días y Horarios</th>
+                <th className="px-4 py-4 md:px-6 md:py-5">Plan y Frecuencia</th>
+                <th className="px-4 py-4 md:px-6 md:py-5">Contacto</th>
+                <th className="px-4 py-4 md:px-6 md:py-5">Estado</th>
               </tr>
             </thead>
-            <tbody className="flex flex-col gap-3 md:table-row-group md:divide-y md:divide-border/30 md:gap-0 p-2 md:p-0">
+            <tbody className="divide-y divide-border/30">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground font-medium">
@@ -166,14 +166,13 @@ export default function Students() {
                   <tr 
                     key={student.id} 
                     onClick={() => setSelectedStudent(student)}
-                    className="grid grid-cols-2 md:table-row bg-card md:bg-transparent border border-border/50 md:border-0 rounded-2xl md:rounded-none p-4 md:p-0 hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row shadow-sm md:shadow-none gap-y-3 w-full"
+                    className="hover:bg-primary/[0.02] transition-colors duration-200 cursor-pointer group/row"
                   >
-                    <td className="col-span-2 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b border-border/10 md:border-0 min-w-0">
-                      <div className="font-display font-bold text-lg md:text-base text-foreground group-hover/row:text-primary transition-colors break-words">{student.first_name} {student.last_name}</div>
+                    <td className="px-6 py-4">
+                      <div className="font-display font-bold text-base text-foreground group-hover/row:text-primary transition-colors">{student.first_name} {student.last_name}</div>
                       {student.grade_level && <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mt-1">{student.grade_level}</div>}
                     </td>
-                    <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b-0 border-border/10">
-                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Días y Horarios</div>
+                    <td className="px-6 py-4">
                       {student.schedule_days ? (
                         <div className="flex flex-col gap-1 text-sm text-muted-foreground">
                           {student.schedule_days.split(' y ').map((schedule, idx) => (
@@ -185,16 +184,14 @@ export default function Students() {
                         </div>
                       ) : <span className="text-muted-foreground/50">-</span>}
                     </td>
-                    <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4 border-b md:border-b-0 border-border/10">
-                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Plan y Frecuencia</div>
+                    <td className="px-6 py-4">
                       <div className="font-medium text-[#e86d11] flex items-center gap-1.5">
                         <Calendar className="w-3.5 h-3.5" />
                         {student.plan}
                       </div>
                       <div className="text-xs text-muted-foreground mt-0.5">{student.frequency}</div>
                     </td>
-                    <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4">
-                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Contacto</div>
+                    <td className="px-6 py-4">
                       {(student.contact_name || student.contact_phone || student.contact_email) ? (
                         <div className="flex flex-col gap-0.5">
                           {student.contact_name && <div className="text-sm font-medium">{student.contact_name}</div>}
@@ -203,8 +200,7 @@ export default function Students() {
                         </div>
                       ) : <span className="text-muted-foreground/50">-</span>}
                     </td>
-                    <td className="col-span-1 md:table-cell px-2 py-2 md:px-6 md:py-4 flex flex-col justify-center items-start md:items-center">
-                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest md:hidden mb-1.5">Estado</div>
+                    <td className="px-6 py-4">
                       {getStatusBadge(student.status)}
                     </td>
                   </tr>
