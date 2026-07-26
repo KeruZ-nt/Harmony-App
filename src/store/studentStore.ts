@@ -150,9 +150,10 @@ export const useStudentStore = create<StudentState>((set) => ({
 
   updateStudent: async (id, updates) => {
     try {
+      const payload = { ...updates, updated_at: new Date().toISOString() };
       const { data, error } = await supabase
         .from('students')
-        .update(updates)
+        .update(payload)
         .eq('id', id)
         .select()
         .single();
@@ -204,7 +205,8 @@ export const useStudentStore = create<StudentState>((set) => ({
           start_date: startDate, 
           next_payment_date,
           schedule_days,
-          status: 'Activo'
+          status: 'Activo',
+          updated_at: new Date().toISOString()
         })
         .eq('id', id)
         .select()

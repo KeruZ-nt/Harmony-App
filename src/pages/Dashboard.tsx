@@ -66,30 +66,41 @@ export default function Dashboard() {
         // 3. Fetch Recent Activity
         let activities: any[] = [];
       
-        if (todaySessions.length > 0) {
+        // Agregar las sesiones de hoy (hasta 5)
+        todaySessions.slice(0, 5).forEach(session => {
           activities.push({
-            id: 's-' + todaySessions[0].id,
+            id: 's-' + session.id,
             type: 'session',
-            title: `Clase con ${todaySessions[0].students?.first_name}`,
-            updated_at: todaySessions[0].start_time
+            title: `Clase con ${session.students?.first_name}`,
+            updated_at: session.start_time
           });
-        }
+        });
   
+        // Agregar los alumnos creados o actualizados recientemente
         if (studentsData && studentsData.length > 0) {
-          const sortedStudents = [...studentsData].sort((a, b) => 
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          );
+          const recentStudents = [...studentsData].sort((a, b) => 
+            new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime()
+          ).slice(0, 5);
           
-          activities.push({
-            id: 'st-' + sortedStudents[0].id,
-            type: 'student',
-            title: `Nuevo alumno: ${sortedStudents[0].first_name}`,
-            updated_at: sortedStudents[0].created_at
+          recentStudents.forEach(student => {
+            const createdTime = new Date(student.created_at).getTime();
+            const updatedTime = new Date(student.updated_at || student.created_at).getTime();
+            // Considerar "Nuevo alumno" si se creó en los últimos 2 segundos en comparación con su actualización
+            const isNew = (updatedTime - createdTime) < 2000; 
+
+            activities.push({
+              id: 'st-' + student.id + (isNew ? '-new' : '-upd'),
+              type: isNew ? 'student_new' : 'student_update',
+              title: isNew ? `Nuevo alumno: ${student.first_name}` : `Alumno actualizado: ${student.first_name} a ${student.status}`,
+              updated_at: student.updated_at || student.created_at,
+            });
           });
         }
   
         activities.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
-        setRecentActivity(activities.slice(0, 5));
+        // Quitar duplicados por id si hubiera y limitar a 5
+        const uniqueActivities = activities.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+        setRecentActivity(uniqueActivities.slice(0, 5));
 
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -363,13 +374,15 @@ export default function Dashboard() {
             ) : (
               recentActivity.map((activity) => (
                 <div key={activity.id} className="flex items-start gap-4 pb-5 border-b border-border/40 last:border-0 last:pb-0 group/act">
-                  <div className={`mt-1 w-2.5 h-2.5 rounded-full shrink-0 shadow-sm transition-transform group-hover/act:scale-125 ${activity.type === 'student' ? 'bg-primary shadow-primary/30' : 'bg-secondary shadow-secondary/30'}`} />
+                  <div className={`mt-1 w-2.5 h-2.5 rounded-full shrink-0 shadow-sm transition-transform group-hover/act:scale-125 ${activity.type.startsWith('student') ? 'bg-primary shadow-primary/30' : 'bg-secondary shadow-secondary/30'}`} />
                   <div className="flex-1">
                     <p className="text-sm font-bold text-foreground leading-snug">{activity.title}</p>
                     <p className="text-[11px] font-medium text-muted-foreground mt-1 uppercase tracking-wider">{getTimeAgo(activity.updated_at)}</p>
                   </div>
-                  {activity.type === 'student' ? (
+                  {activity.type === 'student_new' ? (
                     <UserPlus className="w-4 h-4 text-muted-foreground/30 mt-1" />
+                  ) : activity.type === 'student_update' ? (
+                    <UsersRound className="w-4 h-4 text-muted-foreground/30 mt-1" />
                   ) : (
                     <Calendar className="w-4 h-4 text-muted-foreground/30 mt-1" />
                   )}
