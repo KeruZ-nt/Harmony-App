@@ -54,7 +54,8 @@ export function Login() {
         setHasInvitation(!!data.has_invitation);
         if (data.has_invitation && data.suggested_name) {
           setFullName(data.suggested_name);
-          setIsNameLocked(true);
+          // Permitimos que el apoderado cambie el nombre al suyo propio si lo desea
+          setIsNameLocked(false);
         } else if (!data.has_invitation) {
           setIsNameLocked(false);
         }
