@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useWorkspaceStore } from '../../store/workspaceStore';
-import { User, LogOut, Menu, Bell } from 'lucide-react';
+import { User, LogOut, Menu, Bell, Check, Users } from 'lucide-react';
 import { useNotificationStore } from '../../store/notificationStore';
+import { usePortalStore } from '../../store/portalStore';
 
 
 interface HeaderProps {
@@ -14,6 +15,7 @@ interface HeaderProps {
 export const Header = ({ hideLogo = false, onMenuClick }: HeaderProps) => {
   const { profile, signOut } = useAuthStore();
   const { activeWorkspace, activeRole, clearWorkspaces } = useWorkspaceStore();
+  const { portalStudents, selectedStudentId, setSelectedStudentId } = usePortalStore();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -173,7 +175,6 @@ export const Header = ({ hideLogo = false, onMenuClick }: HeaderProps) => {
             <div className="px-4 py-3 border-b border-border/50">
               <p className="text-sm font-medium leading-none">{profile?.full_name || 'Usuario'}</p>
               <p className="text-xs text-muted-foreground mt-1 truncate">{profile?.email}</p>
-            </div>
             <div className="p-1">
               <Link
                 to="/profile"
@@ -184,6 +185,38 @@ export const Header = ({ hideLogo = false, onMenuClick }: HeaderProps) => {
                 Mi Perfil
               </Link>
             </div>
+            
+            {/* Student Switcher in Dropdown */}
+            {activeRole === 'student' && portalStudents.length > 1 && (
+              <div className="border-t border-border/50 p-2">
+                <p className="text-xs font-semibold text-muted-foreground px-2 py-1 uppercase tracking-wider mb-1">
+                  Cambiar Alumno
+                </p>
+                <div className="space-y-1">
+                  {portalStudents.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => {
+                        setSelectedStudentId(s.id);
+                        setDropdownOpen(false);
+                      }}
+                      className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                        selectedStudentId === s.id 
+                          ? 'bg-primary/10 text-primary' 
+                          : 'hover:bg-muted/80 text-foreground'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 opacity-70" />
+                        <span className="truncate">{s.first_name}</span>
+                      </div>
+                      {selectedStudentId === s.id && <Check className="h-4 w-4 text-primary" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="border-t p-1">
               <button
                 onClick={handleSignOut}

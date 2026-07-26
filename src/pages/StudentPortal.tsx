@@ -3,19 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 import { useWorkspaceStore } from '../store/workspaceStore';
 import { Calendar, Clock, Loader2, Music, CheckCircle2, History, GraduationCap, User, Gift, FileText, Repeat } from 'lucide-react';
-
-interface StudentData {
-  id: string;
-  first_name: string;
-  last_name: string;
-  plan: string;
-  frequency: string;
-  status: string;
-  grade_level?: string;
-  age?: number;
-  birth_date?: string;
-  schedule_days?: string;
-}
+import { usePortalStore } from '../store/portalStore';
 
 interface SessionData {
   id: string;
@@ -29,12 +17,9 @@ export default function StudentPortal() {
   const { activeWorkspace } = useWorkspaceStore();
   
   const [loading, setLoading] = useState(true);
-  const [students, setStudents] = useState<StudentData[]>([]);
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
-  const [upcomingSessions, setUpcomingSessions] = useState<SessionData[]>([]);
-  const [allSessions, setAllSessions] = useState<SessionData[]>([]);
+  const { portalStudents, selectedStudentId, setPortalStudents, setSelectedStudentId } = usePortalStore();
 
-  const student = students.find(s => s.id === selectedStudentId) || null;
+  const student = portalStudents.find(s => s.id === selectedStudentId) || null;
 
   useEffect(() => {
     async function fetchStudents() {
@@ -55,9 +40,11 @@ export default function StudentPortal() {
           return;
         }
 
-        setStudents(studentsData || []);
+        setPortalStudents(studentsData || []);
         if (studentsData && studentsData.length > 0) {
-          setSelectedStudentId(studentsData[0].id);
+          if (!selectedStudentId || !studentsData.find(s => s.id === selectedStudentId)) {
+            setSelectedStudentId(studentsData[0].id);
+          }
         } else {
           setLoading(false);
         }
@@ -145,25 +132,6 @@ export default function StudentPortal() {
             </p>
           </div>
         </div>
-        
-        {/* Selector de alumnos (solo si hay más de 1) */}
-        {students.length > 1 && (
-          <div className="mt-4 pt-4 border-t border-border/20 relative z-10 flex flex-wrap gap-2">
-            {students.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setSelectedStudentId(s.id)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${
-                  selectedStudentId === s.id 
-                  ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' 
-                  : 'bg-white/50 hover:bg-white text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {s.first_name} {s.last_name}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {!student ? (
@@ -289,6 +257,7 @@ export default function StudentPortal() {
                           </span>
                         </div>
                       </div>
+                      {/* El selector de alumnos ahora vive en el menú superior (Header) */}
                     </div>
                   ))}
                 </div>
