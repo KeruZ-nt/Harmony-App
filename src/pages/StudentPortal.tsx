@@ -121,12 +121,12 @@ export default function StudentPortal() {
         <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-indigo-600 shadow-md shadow-primary/30 flex items-center justify-center text-white shrink-0">
             <span className="text-2xl font-display font-bold leading-none tracking-tighter uppercase">
-              {activeWorkspace?.name?.charAt(0) || profile?.full_name?.charAt(0) || 'A'}
+              {student ? student.first_name.charAt(0) : (activeWorkspace?.name?.charAt(0) || 'A')}
             </span>
           </div>
           <div className="text-center sm:text-left">
             <h1 className="text-xl sm:text-2xl font-bold font-display tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-              ¡Hola, {profile?.full_name?.split(' ')[0] || 'Apoderado'}!
+              Portal de {student ? student.first_name : 'Alumno'}
             </h1>
             <p className="text-muted-foreground mt-1 text-sm max-w-lg font-medium">
               Bienvenido a tu portal en <span className="text-primary font-bold">{activeWorkspace?.name}</span>.
