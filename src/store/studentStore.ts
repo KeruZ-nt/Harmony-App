@@ -52,10 +52,25 @@ export const useStudentStore = create<StudentState>((set) => ({
       
       const next_payment_date = nextPaymentDate.toISOString().split('T')[0];
 
+      // 0. Buscar si ya existe un perfil con ese correo para vincularlo automáticamente
+      let profile_id = undefined;
+      if (studentData.contact_email && studentData.contact_email.trim()) {
+        const { data: existingProfile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('email', studentData.contact_email.trim())
+          .eq('workspace_id', studentData.workspace_id)
+          .single();
+          
+        if (existingProfile) {
+          profile_id = existingProfile.id;
+        }
+      }
+
       // 1. Insertar el alumno
       const { data: student, error: studentError } = await supabase
         .from('students')
-        .insert({ ...studentData, next_payment_date })
+        .insert({ ...studentData, next_payment_date, profile_id })
         .select()
         .single();
 

@@ -29,36 +29,57 @@ export default function StudentPortal() {
   const { activeWorkspace } = useWorkspaceStore();
   
   const [loading, setLoading] = useState(true);
-  const [student, setStudent] = useState<StudentData | null>(null);
+  const [students, setStudents] = useState<StudentData[]>([]);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [upcomingSessions, setUpcomingSessions] = useState<SessionData[]>([]);
   const [allSessions, setAllSessions] = useState<SessionData[]>([]);
 
+  const student = students.find(s => s.id === selectedStudentId) || null;
+
   useEffect(() => {
-    async function fetchPortalData() {
+    async function fetchStudents() {
       if (!user || !activeWorkspace) return;
       
       try {
         setLoading(true);
-        // Obtener el registro del estudiante ligado a este perfil
-        const { data: studentData, error: studentError } = await supabase
+        // Obtener los registros de estudiantes ligados a este perfil
+        const { data: studentsData, error: studentsError } = await supabase
           .from('students')
           .select('*')
           .eq('profile_id', user.id)
-          .single();
+          .order('created_at', { ascending: true });
 
-        if (studentError) {
-          console.error("Error fetching student", studentError);
+        if (studentsError) {
+          console.error("Error fetching students", studentsError);
           setLoading(false);
           return;
         }
 
-        setStudent(studentData);
+        setStudents(studentsData || []);
+        if (studentsData && studentsData.length > 0) {
+          setSelectedStudentId(studentsData[0].id);
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Fetch portal error:", err);
+        setLoading(false);
+      }
+    }
 
-        // Obtener las sesiones de este estudiante
+    fetchStudents();
+  }, [user?.id, activeWorkspace?.id]);
+
+  useEffect(() => {
+    async function fetchSessions() {
+      if (!selectedStudentId) return;
+      
+      try {
+        setLoading(true);
         const { data: sessionsData, error: sessionsError } = await supabase
           .from('sessions')
           .select('*')
-          .eq('student_id', studentData.id)
+          .eq('student_id', selectedStudentId)
           .order('start_time', { ascending: true });
 
         if (sessionsError) {
@@ -68,18 +89,17 @@ export default function StudentPortal() {
           const upcoming = sessionsData.filter(s => new Date(s.end_time) > now);
           
           setUpcomingSessions(upcoming);
-          setAllSessions([...sessionsData]); // Todas las sesiones, en orden ascendente
+          setAllSessions([...sessionsData]);
         }
-
       } catch (err) {
-        console.error("Fetch portal error:", err);
+        console.error("Fetch sessions error:", err);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchPortalData();
-  }, [user?.id, activeWorkspace?.id]);
+    fetchSessions();
+  }, [selectedStudentId]);
 
   if (loading) {
     return (
@@ -118,13 +138,32 @@ export default function StudentPortal() {
           </div>
           <div className="text-center sm:text-left">
             <h1 className="text-xl sm:text-2xl font-bold font-display tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-              ¡Hola, {student ? student.first_name : profile?.full_name?.split(' ')[0] || 'Alumno'}!
+              ¡Hola, {profile?.full_name?.split(' ')[0] || 'Apoderado'}!
             </h1>
             <p className="text-muted-foreground mt-1 text-sm max-w-lg font-medium">
               Bienvenido a tu portal en <span className="text-primary font-bold">{activeWorkspace?.name}</span>.
             </p>
           </div>
         </div>
+        
+        {/* Selector de alumnos (solo si hay más de 1) */}
+        {students.length > 1 && (
+          <div className="mt-4 pt-4 border-t border-border/20 relative z-10 flex flex-wrap gap-2">
+            {students.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => setSelectedStudentId(s.id)}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 ${
+                  selectedStudentId === s.id 
+                  ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' 
+                  : 'bg-white/50 hover:bg-white text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {s.first_name} {s.last_name}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {!student ? (
