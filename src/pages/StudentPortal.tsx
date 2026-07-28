@@ -13,7 +13,7 @@ interface SessionData {
 }
 
 export default function StudentPortal() {
-  const { user, profile } = useAuthStore();
+  const { user } = useAuthStore();
   const { activeWorkspace } = useWorkspaceStore();
   const [loading, setLoading] = useState(true);
   const [upcomingSessions, setUpcomingSessions] = useState<SessionData[]>([]);
