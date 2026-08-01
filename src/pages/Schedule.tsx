@@ -585,19 +585,33 @@ export default function Schedule() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-foreground mb-1">Estado</label>
-                <Select
-                  value={editingSession.status}
-                  onChange={(val) => setEditingSession({ ...editingSession, status: val })}
-                  options={[
-                    { label: 'Programada', value: 'Programada' },
-                    { label: 'Asistió', value: 'Asistió' },
-                    { label: 'Falta', value: 'Falta' },
-                    { label: 'Reprogramada', value: 'Reprogramada' },
-                    { label: 'Feriado', value: 'Feriado' }
-                  ]}
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-foreground mb-1">Estado</label>
+                  <Select
+                    value={editingSession.status}
+                    onChange={(val) => setEditingSession({ ...editingSession, status: val })}
+                    options={[
+                      { label: 'Programada', value: 'Programada' },
+                      { label: 'Asistió', value: 'Asistió' },
+                      { label: 'Falta', value: 'Falta' },
+                      { label: 'Reprogramada', value: 'Reprogramada' },
+                      { label: 'Feriado', value: 'Feriado' }
+                    ]}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-foreground mb-1">Tipo</label>
+                  <Select
+                    value={editingSession.type || 'Regular'}
+                    onChange={(val) => setEditingSession({ ...editingSession, type: val as any })}
+                    options={[
+                      { label: 'Regular', value: 'Regular' },
+                      { label: 'Reprogramación', value: 'Reprogramación' },
+                      { label: 'Cambio de Horario', value: 'Cambio de Horario' }
+                    ]}
+                  />
+                </div>
               </div>
 
               <div>
@@ -642,6 +656,7 @@ export default function Schedule() {
                       start_time: editingSession.start_time,
                       end_time: editingSession.end_time,
                       status: editingSession.status,
+                      type: editingSession.type,
                       observation: editingSession.observation
                     });
                     addToast({ message: 'Clase actualizada', type: 'success' });
