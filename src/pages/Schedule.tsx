@@ -133,13 +133,21 @@ export default function Schedule() {
       return;
     }
 
-    // Keep the same time, just change the date
+    // Calculate the drop time based on Y coordinate
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const percentage = Math.max(0, Math.min(1, y / rect.height));
+    const hoursFrom8 = percentage * 14;
+    const targetHourFloat = hoursFrom8 + 8;
+    const targetHour = Math.floor(targetHourFloat);
+    const fraction = targetHourFloat - targetHour;
+    const targetMinute = fraction >= 0.5 ? 30 : 0;
+
     const newStart = new Date(targetDate);
-    newStart.setHours(currentStart.getHours(), currentStart.getMinutes(), 0, 0);
+    newStart.setHours(targetHour, targetMinute, 0, 0);
     
-    const currentEnd = new Date(session.end_time);
-    const newEnd = new Date(targetDate);
-    newEnd.setHours(currentEnd.getHours(), currentEnd.getMinutes(), 0, 0);
+    const durationMs = new Date(session.end_time).getTime() - currentStart.getTime();
+    const newEnd = new Date(newStart.getTime() + durationMs);
 
     // Check deviation
     if (currentStart.getDay() !== newStart.getDay() || currentStart.getHours() !== newStart.getHours() || currentStart.getMinutes() !== newStart.getMinutes()) {
@@ -597,9 +605,7 @@ export default function Schedule() {
                       { label: 'Asistió', value: 'Asistió' },
                       { label: 'Falta', value: 'Falta' },
                       { label: 'Ausente', value: 'Ausente' },
-                      { label: 'Reprogramada', value: 'Reprogramada' },
-                      { label: 'Cancelada', value: 'Cancelada' },
-                      { label: 'Feriado', value: 'Feriado' }
+                      { label: 'Cancelada', value: 'Cancelada' }
                     ]}
                   />
                 </div>
