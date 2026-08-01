@@ -202,9 +202,10 @@ export const useSessionStore = create<SessionState>((set) => ({
         return d.getDay() === oldDay && d.getHours() === oldHours && d.getMinutes() === oldMins;
       });
 
-      // Calculamos la diferencia exacta en días entre la original y la nueva
-      // Esto respeta el salto de semana si lo hubiera
-      const dayDiff = Math.round((newDate.getTime() - origDate.getTime()) / (1000 * 3600 * 24));
+      // Calculamos la diferencia exacta en días entre la original y la nueva (ignorando las horas)
+      const origDateOnly = new Date(origDate.getFullYear(), origDate.getMonth(), origDate.getDate());
+      const newDateOnly = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+      const dayDiff = Math.round((newDateOnly.getTime() - origDateOnly.getTime()) / (1000 * 3600 * 24));
 
       const promises = sessionsToShift.map(async (s) => {
         const nextStart = new Date(s.start_time);
