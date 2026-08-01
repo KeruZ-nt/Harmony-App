@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSessionStore } from '../../store/sessionStore';
 import { useToastStore } from '../../store/toastStore';
+import { useWorkspaceStore } from '../../store/workspaceStore';
 import { X, Calendar, CalendarPlus, Trash2, CheckCircle2, Circle, FastForward, Rewind, Edit2, Check, Save } from 'lucide-react';
 import { DatePicker } from '../ui/DatePicker';
 import { Select } from '../ui/Select';
@@ -436,7 +437,7 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                                           String(newStart.getMonth() + 1).padStart(2, '0'),
                                           String(newStart.getDate()).padStart(2, '0')
                                         ].join('-');
-                                        const isBlocked = useWorkspaceStore.getState().blockedDays.some(b => b.date === targetDateStr);
+                                        const isBlocked = useWorkspaceStore.getState().blockedDays.some((b: { date: string }) => b.date === targetDateStr);
                                         if (isBlocked) {
                                           addToast({ message: 'No puedes programar clases en un día bloqueado (Feriado)', type: 'error' });
                                           return;
