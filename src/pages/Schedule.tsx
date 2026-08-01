@@ -648,6 +648,18 @@ export default function Schedule() {
                     if (originalSession) {
                       const origStart = new Date(originalSession.start_time);
                       const newStart = new Date(editingSession.start_time);
+                      
+                      const targetDateStr = [
+                        newStart.getFullYear(),
+                        String(newStart.getMonth() + 1).padStart(2, '0'),
+                        String(newStart.getDate()).padStart(2, '0')
+                      ].join('-');
+                      const isBlocked = blockedDays.some(b => b.date === targetDateStr);
+                      if (isBlocked) {
+                        addToast({ message: 'No puedes programar clases en un día bloqueado (Feriado)', type: 'error' });
+                        return;
+                      }
+
                       if (origStart.getDay() !== newStart.getDay() || origStart.getHours() !== newStart.getHours() || origStart.getMinutes() !== newStart.getMinutes()) {
                         setPendingChange({ 
                           session: originalSession, 

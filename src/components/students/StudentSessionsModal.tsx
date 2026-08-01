@@ -430,6 +430,18 @@ export function StudentSessionsModal({ student, isOpen, onClose, onRequestRenew 
                                   <button
                                     onClick={() => {
                                       if (editingSessionData.start_time !== session.start_time) {
+                                        const newStart = new Date(editingSessionData.start_time);
+                                        const targetDateStr = [
+                                          newStart.getFullYear(),
+                                          String(newStart.getMonth() + 1).padStart(2, '0'),
+                                          String(newStart.getDate()).padStart(2, '0')
+                                        ].join('-');
+                                        const isBlocked = useWorkspaceStore.getState().blockedDays.some(b => b.date === targetDateStr);
+                                        if (isBlocked) {
+                                          addToast({ message: 'No puedes programar clases en un día bloqueado (Feriado)', type: 'error' });
+                                          return;
+                                        }
+
                                         setShiftPrompt({
                                           sessionId: session.id,
                                           currentStart: session.start_time,
