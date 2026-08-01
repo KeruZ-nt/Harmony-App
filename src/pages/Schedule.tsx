@@ -593,9 +593,12 @@ export default function Schedule() {
                     onChange={(val) => setEditingSession({ ...editingSession, status: val })}
                     options={[
                       { label: 'Programada', value: 'Programada' },
+                      { label: 'Completada', value: 'Completada' },
                       { label: 'Asistió', value: 'Asistió' },
                       { label: 'Falta', value: 'Falta' },
+                      { label: 'Ausente', value: 'Ausente' },
                       { label: 'Reprogramada', value: 'Reprogramada' },
+                      { label: 'Cancelada', value: 'Cancelada' },
                       { label: 'Feriado', value: 'Feriado' }
                     ]}
                   />
