@@ -50,7 +50,11 @@ export const useStudentStore = create<StudentState>((set) => ({
       else if (studentData.plan === 'Trimestral') nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 3);
       else if (studentData.plan === 'Semestral') nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 6);
       
-      const next_payment_date = nextPaymentDate.toISOString().split('T')[0];
+      const next_payment_date = [
+        nextPaymentDate.getFullYear(),
+        String(nextPaymentDate.getMonth() + 1).padStart(2, '0'),
+        String(nextPaymentDate.getDate()).padStart(2, '0')
+      ].join('-');
 
       // 0. Buscar si ya existe un perfil con ese correo para vincularlo automáticamente
       let profile_id = undefined;
@@ -111,7 +115,11 @@ export const useStudentStore = create<StudentState>((set) => ({
           // Buscar si el día actual es uno de los días de clase programados
           for (const sched of schedules) {
             if (dayMap[sched.day] === currentDayOfWeek) {
-              const currentDateStr = currentDate.toISOString().split('T')[0];
+              const currentDateStr = [
+                currentDate.getFullYear(),
+                String(currentDate.getMonth() + 1).padStart(2, '0'),
+                String(currentDate.getDate()).padStart(2, '0')
+              ].join('-');
               const blockedDays = useWorkspaceStore.getState().blockedDays;
               const isBlocked = blockedDays.some(b => b.date === currentDateStr);
               
@@ -208,7 +216,11 @@ export const useStudentStore = create<StudentState>((set) => ({
       else if (plan === 'Trimestral') nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 3);
       else if (plan === 'Semestral') nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 6);
       
-      const next_payment_date = nextPaymentDate.toISOString().split('T')[0];
+      const next_payment_date = [
+        nextPaymentDate.getFullYear(),
+        String(nextPaymentDate.getMonth() + 1).padStart(2, '0'),
+        String(nextPaymentDate.getDate()).padStart(2, '0')
+      ].join('-');
       const schedule_days = schedules.length > 0 ? schedules.map(s => `${s.day} a las ${s.time}`).join(' y ') : null;
 
       // 1. Update the student's plan, frequency, start_date and next_payment_date
@@ -261,7 +273,11 @@ export const useStudentStore = create<StudentState>((set) => ({
           
           for (const sched of schedules) {
             if (dayMap[sched.day] === currentDayOfWeek) {
-              const currentDateStr = currentDate.toISOString().split('T')[0];
+              const currentDateStr = [
+                currentDate.getFullYear(),
+                String(currentDate.getMonth() + 1).padStart(2, '0'),
+                String(currentDate.getDate()).padStart(2, '0')
+              ].join('-');
               const blockedDays = useWorkspaceStore.getState().blockedDays;
               const isBlocked = blockedDays.some(b => b.date === currentDateStr);
               
